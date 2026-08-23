@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../models/schedule_manager.dart';
 import 'add_schedule_bottom_sheet.dart';
+import 'package:coffee_shop/routes/auth_notifier.dart';
+import 'package:go_router/go_router.dart';
 
 class ScheduleWidget extends StatelessWidget {
   const ScheduleWidget({super.key});
@@ -18,6 +20,26 @@ class ScheduleWidget extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
+                if (!authNotifier.isAuthenticated) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Login Required'),
+                      content: const Text('Please log in to add schedules.'),
+                      actions: [
+                        TextButton(onPressed: () => context.pop(), child: const Text('Back')),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.pop();
+                            context.push('/login');
+                          },
+                          child: const Text('Log In'),
+                        ),
+                      ],
+                    ),
+                  );
+                  return;
+                }
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
@@ -56,6 +78,26 @@ class ScheduleWidget extends StatelessWidget {
 
                 return GestureDetector(
                   onTap: () {
+                    if (!authNotifier.isAuthenticated) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Login Required'),
+                          content: const Text('Please log in to edit schedules.'),
+                          actions: [
+                            TextButton(onPressed: () => context.pop(), child: const Text('Back')),
+                            ElevatedButton(
+                              onPressed: () {
+                                context.pop();
+                                context.push('/login');
+                              },
+                              child: const Text('Log In'),
+                            ),
+                          ],
+                        ),
+                      );
+                      return;
+                    }
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
@@ -119,6 +161,26 @@ class ScheduleWidget extends StatelessWidget {
                       Switch(
                         value: schedule.isActive,
                         onChanged: (bool value) {
+                          if (!authNotifier.isAuthenticated) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Login Required'),
+                                content: const Text('Please log in to manage schedules.'),
+                                actions: [
+                                  TextButton(onPressed: () => context.pop(), child: const Text('Back')),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      context.pop();
+                                      context.push('/login');
+                                    },
+                                    child: const Text('Log In'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            return;
+                          }
                           ScheduleManager.toggleSchedule(schedule.id, value);
                         },
                         activeColor: Colors.white,

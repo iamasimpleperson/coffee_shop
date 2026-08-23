@@ -3,6 +3,10 @@ import 'package:coffee_shop/features/home/widgets/schedule_widget.dart';
 import 'package:flutter/material.dart';
 import '../widgets/machine_bloc.dart';
 
+import 'package:coffee_shop/routes/auth_notifier.dart';
+import 'package:go_router/go_router.dart';
+import 'package:coffee_shop/routes/route_name.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -16,8 +20,20 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: const Text('Hello, name'),
-        actions: const [CircleAvatar(), SizedBox(width: 20)],
+        title: ListenableBuilder(
+          listenable: authNotifier,
+          builder: (context, _) {
+            final name = authNotifier.currentUser?.name ?? 'Guest';
+            return Text('Hello, $name');
+          },
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () => context.go('/profile'),
+            child: const CircleAvatar(child: Icon(Icons.person)),
+          ),
+          const SizedBox(width: 20),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

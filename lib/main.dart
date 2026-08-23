@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'routes/app_routes.dart';
+import 'routes/auth_notifier.dart';
 import 'models/schedule_manager.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await authNotifier.init();
   ScheduleManager.init();
   runApp(const MyApp());
 }

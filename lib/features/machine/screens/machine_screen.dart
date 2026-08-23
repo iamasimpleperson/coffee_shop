@@ -2,6 +2,7 @@ import 'package:coffee_shop/features/machine/widgets/machine_options.dart';
 import 'package:coffee_shop/features/machine/widgets/machine_summary.dart';
 import 'package:coffee_shop/features/machine/widgets/setting.dart';
 import 'package:coffee_shop/features/machine/widgets/statistic.dart';
+import 'package:coffee_shop/models/machine_manager.dart';
 import 'package:coffee_shop/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -37,9 +38,26 @@ class _MachineScreenState extends State<MachineScreen> {
           children: [
             SizedBox(height: 250),
             MachineOptions(),
-            MachineSummary(),
-            SettingsWidget(),
-            StatisticsWidget(),
+            ListenableBuilder(
+              listenable: machineManager,
+              builder: (context, _) {
+                return Column(
+                  children: [
+                    MachineSummary(
+                      waterLevel: machineManager.waterLevel,
+                      beansLevel: machineManager.beansLevel,
+                      hasCup: machineManager.hasCup,
+                      daysUntilClean: machineManager.daysUntilClean,
+                    ),
+                    SettingsWidget(),
+                    StatisticsWidget(
+                      cupsMade: machineManager.cupsMade,
+                      lastCleaned: machineManager.lastCleanedDate,
+                    ),
+                  ],
+                );
+              },
+            ),
           ],
         ),
       ),

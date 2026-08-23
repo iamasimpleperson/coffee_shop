@@ -45,10 +45,7 @@ class BottomNavigationvarWidget extends StatelessWidget {
       showUnselectedLabels: true,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: ''),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.coffee, ),
-          label: '',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.coffee), label: ''),
         BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: ''),
       ],
     );

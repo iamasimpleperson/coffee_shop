@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../models/cart_manager.dart';
 import '../models/store_product.dart';
+import 'package:coffee_shop/routes/auth_notifier.dart';
 
 class StoreProductDetailScreen extends StatefulWidget {
   final String productId;
@@ -217,6 +218,26 @@ class _StoreProductDetailScreenState extends State<StoreProductDetailScreen> {
                           height: 56,
                           child: ElevatedButton(
                             onPressed: () {
+                              if (!authNotifier.isAuthenticated) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Login Required'),
+                                    content: const Text('Please log in to add to cart.'),
+                                    actions: [
+                                      TextButton(onPressed: () => context.pop(), child: const Text('Back')),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          context.pop();
+                                          context.push('/login');
+                                        },
+                                        child: const Text('Log In'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                return;
+                              }
                               CartManager.addToCart(product, _selectedSize, _quantity);
                               context.pop();
                               ScaffoldMessenger.of(context).showSnackBar(

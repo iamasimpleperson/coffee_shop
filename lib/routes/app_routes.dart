@@ -17,13 +17,11 @@ const List<String> publicRoutes = [
   AppRoutes.login,
   AppRoutes.register,
   AppRoutes.home,
-  AppRoutes.connectMachine,
   AppRoutes.onboarding,
   AppRoutes.products,
-  AppRoutes.machine,
   AppRoutes.store,
   AppRoutes.storeProductDetail,
-  AppRoutes.checkout,
+  AppRoutes.profile,
 ];
 
 final GoRouter appRouter = GoRouter(

@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'choose_coffee.dart';
 import '../../../models/favorites_manager.dart';
+import 'package:coffee_shop/routes/auth_notifier.dart';
+import 'package:coffee_shop/models/machine_manager.dart';
+import 'package:go_router/go_router.dart';
 
 class CoffeeDetail extends StatefulWidget {
   final CoffeeOption coffee;
@@ -31,6 +34,29 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
   Timer? _brewingTimer;
 
   void startBrewing() {
+    if (!authNotifier.isAuthenticated) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Login Required'),
+          content: const Text('Please log in to make coffee.'),
+          actions: [
+            TextButton(
+              onPressed: () => context.pop(),
+              child: const Text('Back'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.pop();
+                context.push('/login');
+              },
+              child: const Text('Log In'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     setState(() {
       isBrewing = true;
       isDone = false;
@@ -46,6 +72,7 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
         setState(() {
           isDone = true;
         });
+        machineManager.makeCoffee();
       }
     });
   }
@@ -115,6 +142,31 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
                         color: isFavourite ? Colors.red : Colors.grey,
                       ),
                       onPressed: () {
+                        if (!authNotifier.isAuthenticated) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Login Required'),
+                              content: const Text(
+                                'Please log in to add favourites.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => context.pop(),
+                                  child: const Text('Back'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    context.pop();
+                                    context.push('/login');
+                                  },
+                                  child: const Text('Log In'),
+                                ),
+                              ],
+                            ),
+                          );
+                          return;
+                        }
                         setState(() {
                           isFavourite = !isFavourite;
                           FavoritesManager.toggleFavorite(widget.coffee);
@@ -370,8 +422,7 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              context.pop();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black87,
