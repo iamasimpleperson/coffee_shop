@@ -4,6 +4,9 @@ import 'package:coffee_shop/routes/modules/auth_route.dart';
 import 'package:coffee_shop/routes/modules/shop_route.dart';
 import 'package:coffee_shop/routes/modules/onbording_route.dart';
 import 'package:coffee_shop/routes/route_name.dart';
+import '../features/cart/screens/checkout_screen.dart';
+import '../features/profile/screens/profile_screen.dart';
+import '../features/profile/screens/order_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -22,6 +25,7 @@ const List<String> publicRoutes = [
   AppRoutes.store,
   AppRoutes.storeProductDetail,
   AppRoutes.profile,
+  '/order-history',
 ];
 
 final GoRouter appRouter = GoRouter(
@@ -62,6 +66,14 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.machine,
       builder: (context, state) => const MachineScreen(),
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfileScreen(),
+    ),
+    GoRoute(
+      path: '/order-history',
+      builder: (context, state) => const OrderHistoryScreen(),
     ),
 
     // Merge module route lists

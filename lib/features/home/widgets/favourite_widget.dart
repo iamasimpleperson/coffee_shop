@@ -63,6 +63,7 @@ class FavouriteWidget extends StatelessWidget {
                       );
                     },
                     child: _buildFavouriteCard(
+                      context: context,
                       size: 'M',
                       title: option.name.replaceAll('\n', ' '),
                       subtitle: 'Your favorite',
@@ -80,6 +81,7 @@ class FavouriteWidget extends StatelessWidget {
   }
 
   Widget _buildFavouriteCard({
+    required BuildContext context,
     required String title,
     required String subtitle,
     required IconData icon,
@@ -91,7 +93,7 @@ class FavouriteWidget extends StatelessWidget {
       margin: const EdgeInsets.only(right: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF6F7F9), // Light grey matching MachineBloc
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -132,14 +134,14 @@ class FavouriteWidget extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600]),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

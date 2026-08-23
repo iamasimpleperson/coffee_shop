@@ -148,15 +148,18 @@ class StoreScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 160,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: placeholderColor,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Center(
-                child: Icon(icon, size: 64, color: Colors.black26),
+            Hero(
+              tag: 'store_product_${product.id}',
+              child: Container(
+                height: 160,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: placeholderColor,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Center(
+                  child: Icon(icon, size: 64, color: Colors.black26),
+                ),
               ),
             ),
             const SizedBox(height: 12),

@@ -2,6 +2,7 @@ import 'package:coffee_shop/routes/auth_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../core/theme/theme_notifier.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -162,6 +163,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               'Save Changes',
                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
+                    ),
+                    const SizedBox(height: 16),
+                    ListenableBuilder(
+                      listenable: themeNotifier,
+                      builder: (context, _) {
+                        return SwitchListTile(
+                          title: const Text('Dark Mode'),
+                          secondary: const Icon(Icons.dark_mode),
+                          value: themeNotifier.isDarkMode,
+                          onChanged: (val) {
+                            themeNotifier.toggleTheme();
+                          },
+                          contentPadding: EdgeInsets.zero,
+                        );
+                      }
+                    ),
+                    ListTile(
+                      title: const Text('Order History'),
+                      leading: const Icon(Icons.receipt_long),
+                      trailing: const Icon(Icons.chevron_right),
+                      contentPadding: EdgeInsets.zero,
+                      onTap: () => context.push('/order-history'),
                     ),
                     const Spacer(),
                     OutlinedButton.icon(

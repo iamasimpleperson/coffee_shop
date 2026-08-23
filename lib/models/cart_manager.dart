@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../features/store/models/store_product.dart';
 
 class CartItem {
@@ -21,12 +23,55 @@ class CartManager {
   // Total quantity of all items in cart (for the badge)
   static final ValueNotifier<int> cartCountNotifier = ValueNotifier<int>(0);
 
-  static void _updateTotalCount() {
+  static Future<void> init() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? cartJson = prefs.getString('cart_items');
+    
+    if (cartJson != null) {
+      try {
+        final List<dynamic> decoded = jsonDecode(cartJson);
+        final List<CartItem> loadedItems = [];
+        
+        for (var item in decoded) {
+          final productId = item['productId'];
+          final size = item['size'];
+          final quantity = item['quantity'];
+          
+          try {
+            final product = mockStoreProducts.firstWhere((p) => p.id == productId);
+            loadedItems.add(CartItem(product: product, size: size, quantity: quantity));
+          } catch (e) {
+            // Product not found
+          }
+        }
+        cartItemsNotifier.value = loadedItems;
+        _updateTotalCount(save: false);
+      } catch (e) {
+        // Corrupted JSON
+      }
+    }
+  }
+
+  static Future<void> _saveCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<Map<String, dynamic>> data = cartItemsNotifier.value.map((item) {
+      return {
+        'productId': item.product.id,
+        'size': item.size,
+        'quantity': item.quantity,
+      };
+    }).toList();
+    
+    await prefs.setString('cart_items', jsonEncode(data));
+  }
+
+  static void _updateTotalCount({bool save = true}) {
     int total = 0;
     for (var item in cartItemsNotifier.value) {
       total += item.quantity;
     }
     cartCountNotifier.value = total;
+    if (save) _saveCart();
   }
 
   static void addToCart(StoreProduct product, String size, int quantity) {

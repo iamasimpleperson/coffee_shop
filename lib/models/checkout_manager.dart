@@ -21,9 +21,12 @@ class AddressData {
 }
 
 class CheckoutManager {
-  static final ValueNotifier<AddressData?> addressNotifier = ValueNotifier<AddressData?>(null);
-  static final ValueNotifier<String?> paymentMethodNotifier = ValueNotifier<String?>(null);
-  static final ValueNotifier<String> deliveryMethodNotifier = ValueNotifier<String>('Standard');
+  static final ValueNotifier<AddressData?> addressNotifier =
+      ValueNotifier<AddressData?>(null);
+  static final ValueNotifier<String?> paymentMethodNotifier =
+      ValueNotifier<String?>(null);
+  static final ValueNotifier<String> deliveryMethodNotifier =
+      ValueNotifier<String>('Standard');
 
   static void setAddress(AddressData address) {
     addressNotifier.value = address;

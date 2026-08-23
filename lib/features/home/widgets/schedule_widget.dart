@@ -111,7 +111,7 @@ class ScheduleWidget extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF6F7F9),
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(24),
                     ),
                   child: Row(
@@ -121,7 +121,7 @@ class ScheduleWidget extends StatelessWidget {
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Center(
@@ -138,22 +138,23 @@ class ScheduleWidget extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              schedule.title,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                schedule.title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                                ),
                               ),
-                            ),
                             const SizedBox(height: 4),
-                            Text(
-                              '${schedule.isRepeat ? 'Repeating' : 'One-time'} • ${schedule.time.format(context)}',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w500,
+                              Text(
+                                '${schedule.isRepeat ? 'Repeating' : 'One-time'} • ${schedule.time.format(context)}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),

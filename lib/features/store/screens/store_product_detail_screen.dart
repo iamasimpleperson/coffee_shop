@@ -50,7 +50,10 @@ class _StoreProductDetailScreenState extends State<StoreProductDetailScreen> {
             top: 100,
             left: 0,
             right: 0,
-            child: Icon(icon, size: 200, color: Colors.black12),
+            child: Hero(
+              tag: 'store_product_${product.id}',
+              child: Icon(icon, size: 200, color: Colors.black12),
+            ),
           ),
           
           // Back Button

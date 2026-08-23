@@ -15,7 +15,7 @@ class _MachineBlocState extends State<MachineBloc> {
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 255, 255, 255),
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(28),
       ),
       child: Column(
@@ -25,9 +25,9 @@ class _MachineBlocState extends State<MachineBloc> {
           // Header Row
           Row(
             children: [
-              const Text(
+              Text(
                 'Freya',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               const SizedBox(width: 12),
               Container(
@@ -57,7 +57,7 @@ class _MachineBlocState extends State<MachineBloc> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             decoration: BoxDecoration(
-              color: const Color(0xFFF6F7F9), // Light grey
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(28),
             ),
             child: Row(
@@ -137,7 +137,7 @@ class _MachineBlocState extends State<MachineBloc> {
             strokeCap: StrokeCap.round,
           ),
         ),
-        Icon(icon, color: Colors.black87, size: 22),
+        Icon(icon, color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black87, size: 22),
       ],
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../models/cart_manager.dart';
 import '../../../models/checkout_manager.dart';
+import '../../../models/order_history_manager.dart';
 import '../widgets/address_bottom_sheet.dart';
 import '../widgets/payment_bottom_sheet.dart';
 import '../widgets/success_bottom_sheet.dart';
@@ -24,6 +25,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     
     if (mounted) {
       setState(() => _isLoading = false);
+      
+      final subtotal = CartManager.getTotalPrice();
+      final shipping = CheckoutManager.getShippingCost();
+      await OrderHistoryManager.addOrder(subtotal + shipping, CartManager.cartItemsNotifier.value);
+      CartManager.clearCart();
+
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,

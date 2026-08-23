@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:coffee_shop/models/machine_manager.dart';
 
 class SettingsWidget extends StatelessWidget {
   const SettingsWidget({super.key});
@@ -25,11 +26,25 @@ class SettingsWidget extends StatelessWidget {
             clipBehavior: Clip.antiAlias, // Ensures ink splash respects rounded corners
             child: Column(
               children: [
-                _buildSettingItem('General'),
+                _buildSettingItem(context, 'General', () {}),
                 const Divider(height: 1, color: Color(0xFFF0F0F0)),
-                _buildSettingItem('Reminders'),
+                _buildSettingItem(context, 'Reminders', () {}),
                 const Divider(height: 1, color: Color(0xFFF0F0F0)),
-                _buildSettingItem('Preferences'),
+                _buildSettingItem(context, 'Preferences', () {}),
+                const Divider(height: 1, color: Color(0xFFF0F0F0)),
+                _buildSettingItem(context, 'Refill Water & Beans', () {
+                  machineManager.refill();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Machine refilled!')),
+                  );
+                }),
+                const Divider(height: 1, color: Color(0xFFF0F0F0)),
+                _buildSettingItem(context, 'Clean Machine', () {
+                  machineManager.cleanMachine();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Machine cleaned!')),
+                  );
+                }),
               ],
             ),
           ),
@@ -38,7 +53,7 @@ class SettingsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingItem(String title) {
+  Widget _buildSettingItem(BuildContext context, String title, VoidCallback onTap) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       title: Text(
@@ -46,7 +61,7 @@ class SettingsWidget extends StatelessWidget {
         style: const TextStyle(fontSize: 16, color: Colors.black87),
       ),
       trailing: const Icon(Icons.chevron_right, color: Colors.black87),
-      onTap: () {},
+      onTap: onTap,
     );
   }
 }
