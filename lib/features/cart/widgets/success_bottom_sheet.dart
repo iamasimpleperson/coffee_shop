@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/cart_manager.dart';
 import '../../../models/checkout_manager.dart';
 import '../../../routes/route_name.dart';
 
-class SuccessBottomSheet extends StatelessWidget {
+class SuccessBottomSheet extends ConsumerWidget {
   const SuccessBottomSheet({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(
@@ -24,13 +26,24 @@ class SuccessBottomSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: const BoxDecoration(
-              color: Color(0xFFF0F0FF),
-              shape: BoxShape.circle,
+          SizedBox(
+            height: 120,
+            width: 120,
+            child: Lottie.network(
+              'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/done.json',
+              repeat: false,
+              errorBuilder: (context, error, stackTrace) {
+                // Fallback if the network request fails
+                return Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF0F0FF),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.check, size: 48, color: Color(0xFF9080F0)),
+                );
+              },
             ),
-            child: const Icon(Icons.check, size: 48, color: Color(0xFF9080F0)),
           ),
           const SizedBox(height: 24),
           const Text(
@@ -48,8 +61,8 @@ class SuccessBottomSheet extends StatelessWidget {
             height: 56,
             child: ElevatedButton(
               onPressed: () {
-                CartManager.clearCart();
-                CheckoutManager.reset();
+                ref.read(cartProvider.notifier).clearCart();
+                ref.read(checkoutProvider.notifier).reset();
                 // Pop the bottom sheet
                 Navigator.pop(context);
                 // Pop the checkout screen, and Cart Screen, returning to Store

@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../routes/route_name.dart';
 import '../../../models/cart_manager.dart';
+import '../../../services/mock_data_service.dart';
 import '../models/store_product.dart';
 import 'cart_screen.dart';
 
-class StoreScreen extends StatelessWidget {
+class StoreScreen extends ConsumerWidget {
   const StoreScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final beans = mockStoreProducts.where((p) => p.category == 'Beans').toList();
-    final care = mockStoreProducts.where((p) => p.category == 'Care').toList();
-
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -28,9 +27,9 @@ class StoreScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          ValueListenableBuilder<int>(
-            valueListenable: CartManager.cartCountNotifier,
-            builder: (context, count, child) {
+          Builder(
+            builder: (context) {
+              final count = ref.watch(cartCountProvider);
               return Container(
                 margin: const EdgeInsets.only(right: 8),
                 child: Stack(
@@ -86,17 +85,34 @@ class StoreScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSection(context, 'Beans', beans),
-            const SizedBox(height: 32),
-            _buildSection(context, 'Care', care),
-            const SizedBox(height: 32),
-          ],
-        ),
+      body: FutureBuilder<List<StoreProduct>>(
+        future: MockDataService.getStoreProducts(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No products available.'));
+          }
+
+          final products = snapshot.data!;
+          final beans = products.where((p) => p.category == 'Beans').toList();
+          final care = products.where((p) => p.category == 'Care').toList();
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSection(context, 'Beans', beans),
+                const SizedBox(height: 32),
+                _buildSection(context, 'Care', care),
+                const SizedBox(height: 32),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

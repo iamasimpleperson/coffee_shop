@@ -1,13 +1,26 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:coffee_shop/models/user_model.dart';
 
-class AuthNotifier extends ChangeNotifier {
-  UserModel? _currentUser;
-  bool _isAuthenticated = false;
+class AuthState {
+  final UserModel? currentUser;
+  final bool isAuthenticated;
 
-  bool get isAuthenticated => _isAuthenticated;
-  UserModel? get currentUser => _currentUser;
+  AuthState({this.currentUser, this.isAuthenticated = false});
+
+  AuthState copyWith({UserModel? currentUser, bool? isAuthenticated}) {
+    return AuthState(
+      currentUser: currentUser ?? this.currentUser,
+      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+    );
+  }
+}
+
+class AuthNotifier extends Notifier<AuthState> {
+  @override
+  AuthState build() {
+    return AuthState();
+  }
 
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
@@ -21,10 +34,9 @@ class AuthNotifier extends ChangeNotifier {
     }
 
     if (userId != null && userName != null && userEmail != null) {
-      _currentUser = UserModel(id: userId, name: userName, email: userEmail, registeredDate: registeredDate);
-      _isAuthenticated = true;
+      final user = UserModel(id: userId, name: userName, email: userEmail, registeredDate: registeredDate);
+      state = AuthState(currentUser: user, isAuthenticated: true);
     }
-    notifyListeners();
   }
 
   Future<void> login(String email, String password) async {
@@ -33,16 +45,14 @@ class AuthNotifier extends ChangeNotifier {
 
     // Mock user login
     final now = DateTime.now();
-    _currentUser = UserModel(id: '1', name: 'Coffee Lover', email: email, registeredDate: now);
-    _isAuthenticated = true;
+    final user = UserModel(id: '1', name: 'Coffee Lover', email: email, registeredDate: now);
+    state = AuthState(currentUser: user, isAuthenticated: true);
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_id', _currentUser!.id);
-    await prefs.setString('user_name', _currentUser!.name);
-    await prefs.setString('user_email', _currentUser!.email);
+    await prefs.setString('user_id', user.id);
+    await prefs.setString('user_name', user.name);
+    await prefs.setString('user_email', user.email);
     await prefs.setString('user_registered_date', now.toIso8601String());
-
-    notifyListeners();
   }
 
   Future<void> register(String name, String email, String password) async {
@@ -51,43 +61,38 @@ class AuthNotifier extends ChangeNotifier {
 
     // Mock user registration
     final now = DateTime.now();
-    _currentUser = UserModel(id: '2', name: name, email: email, registeredDate: now);
-    _isAuthenticated = true;
+    final user = UserModel(id: '2', name: name, email: email, registeredDate: now);
+    state = AuthState(currentUser: user, isAuthenticated: true);
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_id', _currentUser!.id);
-    await prefs.setString('user_name', _currentUser!.name);
-    await prefs.setString('user_email', _currentUser!.email);
+    await prefs.setString('user_id', user.id);
+    await prefs.setString('user_name', user.name);
+    await prefs.setString('user_email', user.email);
     await prefs.setString('user_registered_date', now.toIso8601String());
-
-    notifyListeners();
   }
 
   Future<void> updateProfile(String name, String email) async {
-    if (_currentUser != null) {
-      _currentUser = UserModel(id: _currentUser!.id, name: name, email: email, registeredDate: _currentUser!.registeredDate);
+    if (state.currentUser != null) {
+      final user = UserModel(id: state.currentUser!.id, name: name, email: email, registeredDate: state.currentUser!.registeredDate);
+      state = state.copyWith(currentUser: user);
       
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_name', name);
       await prefs.setString('user_email', email);
-
-      notifyListeners();
     }
   }
 
   Future<void> logout() async {
-    _currentUser = null;
-    _isAuthenticated = false;
+    state = AuthState();
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('user_id');
     await prefs.remove('user_name');
     await prefs.remove('user_email');
     await prefs.remove('user_registered_date');
-
-    notifyListeners();
   }
 }
 
-// Global instance for simple access
-final authNotifier = AuthNotifier();
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
+  return AuthNotifier();
+});

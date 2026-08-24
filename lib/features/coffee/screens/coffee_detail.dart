@@ -1,21 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'choose_coffee.dart';
 import '../../../models/favorites_manager.dart';
 import 'package:coffee_shop/routes/auth_notifier.dart';
 import 'package:coffee_shop/models/machine_manager.dart';
 import 'package:go_router/go_router.dart';
 
-class CoffeeDetail extends StatefulWidget {
+class CoffeeDetail extends ConsumerStatefulWidget {
   final CoffeeOption coffee;
 
   const CoffeeDetail({super.key, required this.coffee});
 
   @override
-  State<CoffeeDetail> createState() => _CoffeeDetailState();
+  ConsumerState<CoffeeDetail> createState() => _CoffeeDetailState();
 }
 
-class _CoffeeDetailState extends State<CoffeeDetail> {
+class _CoffeeDetailState extends ConsumerState<CoffeeDetail> {
   String selectedSize = '';
   String selectedFlavor = '';
   int amount = 1;
@@ -25,7 +27,6 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
   @override
   void initState() {
     super.initState();
-    isFavourite = FavoritesManager.isFavorite(widget.coffee);
   }
 
   bool isBrewing = false;
@@ -34,7 +35,7 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
   Timer? _brewingTimer;
 
   void startBrewing() {
-    if (!authNotifier.isAuthenticated) {
+    if (!ref.read(authProvider).isAuthenticated) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -72,7 +73,7 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
         setState(() {
           isDone = true;
         });
-        machineManager.makeCoffee();
+        ref.read(machineProvider.notifier).makeCoffee();
       }
     });
   }
@@ -93,6 +94,8 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
 
   @override
   Widget build(BuildContext context) {
+    isFavourite = ref.watch(favoritesProvider).any((fav) => fav.id == widget.coffee.id);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -142,7 +145,7 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
                         color: isFavourite ? Colors.red : Colors.grey,
                       ),
                       onPressed: () {
-                        if (!authNotifier.isAuthenticated) {
+                        if (!ref.read(authProvider).isAuthenticated) {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
@@ -168,8 +171,14 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
                           return;
                         }
                         setState(() {
-                          isFavourite = !isFavourite;
-                          FavoritesManager.toggleFavorite(widget.coffee);
+                          final favoriteOption = CoffeeOption(
+                            id: widget.coffee.id,
+                            name: widget.coffee.name,
+                            icon: widget.coffee.icon,
+                            size: selectedSize.isNotEmpty ? selectedSize : 'Small',
+                            flavor: selectedFlavor.isNotEmpty ? selectedFlavor : 'Regular',
+                          );
+                          ref.read(favoritesProvider.notifier).toggleFavorite(favoriteOption);
                         });
                       },
                     ),
@@ -455,11 +464,17 @@ class _CoffeeDetailState extends State<CoffeeDetail> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              CircularProgressIndicator(
-                value: brewingTimeLeft / 10,
-                strokeWidth: 4,
-                backgroundColor: Colors.grey.shade200,
-                valueColor: const AlwaysStoppedAnimation<Color>(Colors.black),
+              Lottie.network(
+                'https://assets2.lottiefiles.com/packages/lf20_t57a1773.json',
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return CircularProgressIndicator(
+                    value: brewingTimeLeft / 10,
+                    strokeWidth: 4,
+                    backgroundColor: Colors.grey.shade200,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.black),
+                  );
+                },
               ),
               Center(
                 child: Text(

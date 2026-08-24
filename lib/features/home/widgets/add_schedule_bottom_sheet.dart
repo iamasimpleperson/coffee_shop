@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/schedule_manager.dart';
 
-class AddScheduleBottomSheet extends StatefulWidget {
+class AddScheduleBottomSheet extends ConsumerStatefulWidget {
   final ScheduleModel? existingSchedule;
 
   const AddScheduleBottomSheet({super.key, this.existingSchedule});
 
   @override
-  State<AddScheduleBottomSheet> createState() => _AddScheduleBottomSheetState();
+  ConsumerState<AddScheduleBottomSheet> createState() => _AddScheduleBottomSheetState();
 }
 
-class _AddScheduleBottomSheetState extends State<AddScheduleBottomSheet> {
+class _AddScheduleBottomSheetState extends ConsumerState<AddScheduleBottomSheet> {
   late final TextEditingController _nameController;
   late TimeOfDay _selectedTime;
   late bool _isRepeat;
@@ -65,9 +66,9 @@ class _AddScheduleBottomSheetState extends State<AddScheduleBottomSheet> {
     );
 
     if (widget.existingSchedule != null) {
-      ScheduleManager.updateSchedule(schedule);
+      ref.read(scheduleProvider.notifier).updateSchedule(schedule);
     } else {
-      ScheduleManager.addSchedule(schedule);
+      ref.read(scheduleProvider.notifier).addSchedule(schedule);
     }
     
     Navigator.pop(context);

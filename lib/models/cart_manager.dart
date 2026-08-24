@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../features/store/models/store_product.dart';
 
@@ -17,13 +17,13 @@ class CartItem {
   double get totalPrice => product.price * quantity;
 }
 
-class CartManager {
-  static final ValueNotifier<List<CartItem>> cartItemsNotifier = ValueNotifier<List<CartItem>>([]);
-  
-  // Total quantity of all items in cart (for the badge)
-  static final ValueNotifier<int> cartCountNotifier = ValueNotifier<int>(0);
+class CartNotifier extends Notifier<List<CartItem>> {
+  @override
+  List<CartItem> build() {
+    return [];
+  }
 
-  static Future<void> init() async {
+  Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     final String? cartJson = prefs.getString('cart_items');
     
@@ -44,17 +44,16 @@ class CartManager {
             // Product not found
           }
         }
-        cartItemsNotifier.value = loadedItems;
-        _updateTotalCount(save: false);
+        state = loadedItems;
       } catch (e) {
         // Corrupted JSON
       }
     }
   }
 
-  static Future<void> _saveCart() async {
+  Future<void> _saveCart() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<Map<String, dynamic>> data = cartItemsNotifier.value.map((item) {
+    final List<Map<String, dynamic>> data = state.map((item) {
       return {
         'productId': item.product.id,
         'size': item.size,
@@ -65,19 +64,9 @@ class CartManager {
     await prefs.setString('cart_items', jsonEncode(data));
   }
 
-  static void _updateTotalCount({bool save = true}) {
-    int total = 0;
-    for (var item in cartItemsNotifier.value) {
-      total += item.quantity;
-    }
-    cartCountNotifier.value = total;
-    if (save) _saveCart();
-  }
-
-  static void addToCart(StoreProduct product, String size, int quantity) {
-    final currentList = List<CartItem>.from(cartItemsNotifier.value);
+  void addToCart(StoreProduct product, String size, int quantity) {
+    final currentList = List<CartItem>.from(state);
     
-    // Check if the item already exists in the cart
     final index = currentList.indexWhere((item) => item.product.id == product.id && item.size == size);
     
     if (index != -1) {
@@ -86,12 +75,12 @@ class CartManager {
       currentList.add(CartItem(product: product, size: size, quantity: quantity));
     }
     
-    cartItemsNotifier.value = currentList;
-    _updateTotalCount();
+    state = currentList;
+    _saveCart();
   }
 
-  static void updateQuantity(CartItem cartItem, int delta) {
-    final currentList = List<CartItem>.from(cartItemsNotifier.value);
+  void updateQuantity(CartItem cartItem, int delta) {
+    final currentList = List<CartItem>.from(state);
     final index = currentList.indexWhere((item) => item.product.id == cartItem.product.id && item.size == cartItem.size);
     
     if (index != -1) {
@@ -99,28 +88,34 @@ class CartManager {
       if (currentList[index].quantity <= 0) {
         currentList.removeAt(index);
       }
-      cartItemsNotifier.value = currentList;
-      _updateTotalCount();
+      state = currentList;
+      _saveCart();
     }
   }
 
-  static void removeItem(CartItem cartItem) {
-    final currentList = List<CartItem>.from(cartItemsNotifier.value);
+  void removeItem(CartItem cartItem) {
+    final currentList = List<CartItem>.from(state);
     currentList.removeWhere((item) => item.product.id == cartItem.product.id && item.size == cartItem.size);
-    cartItemsNotifier.value = currentList;
-    _updateTotalCount();
+    state = currentList;
+    _saveCart();
   }
 
-  static void clearCart() {
-    cartItemsNotifier.value = [];
-    _updateTotalCount();
-  }
-
-  static double getTotalPrice() {
-    double total = 0.0;
-    for (var item in cartItemsNotifier.value) {
-      total += item.totalPrice;
-    }
-    return total;
+  void clearCart() {
+    state = [];
+    _saveCart();
   }
 }
+
+final cartProvider = NotifierProvider<CartNotifier, List<CartItem>>(() {
+  return CartNotifier();
+});
+
+final cartCountProvider = Provider<int>((ref) {
+  final items = ref.watch(cartProvider);
+  return items.fold(0, (sum, item) => sum + item.quantity);
+});
+
+final cartTotalProvider = Provider<double>((ref) {
+  final items = ref.watch(cartProvider);
+  return items.fold(0.0, (sum, item) => sum + item.totalPrice);
+});

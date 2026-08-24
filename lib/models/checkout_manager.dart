@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AddressData {
   final String firstName;
@@ -20,38 +20,62 @@ class AddressData {
   String get displayAddress => '$address, $city, $postCode';
 }
 
-class CheckoutManager {
-  static final ValueNotifier<AddressData?> addressNotifier =
-      ValueNotifier<AddressData?>(null);
-  static final ValueNotifier<String?> paymentMethodNotifier =
-      ValueNotifier<String?>(null);
-  static final ValueNotifier<String> deliveryMethodNotifier =
-      ValueNotifier<String>('Standard');
+class CheckoutState {
+  final AddressData? address;
+  final String? paymentMethod;
+  final String deliveryMethod;
 
-  static void setAddress(AddressData address) {
-    addressNotifier.value = address;
+  CheckoutState({
+    this.address,
+    this.paymentMethod,
+    this.deliveryMethod = 'Standard',
+  });
+
+  CheckoutState copyWith({
+    AddressData? address,
+    String? paymentMethod,
+    String? deliveryMethod,
+  }) {
+    return CheckoutState(
+      address: address ?? this.address,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      deliveryMethod: deliveryMethod ?? this.deliveryMethod,
+    );
+  }
+}
+
+class CheckoutNotifier extends Notifier<CheckoutState> {
+  @override
+  CheckoutState build() {
+    return CheckoutState();
   }
 
-  static void setPaymentMethod(String method) {
-    paymentMethodNotifier.value = method;
+  void setAddress(AddressData address) {
+    state = state.copyWith(address: address);
   }
 
-  static void setDeliveryMethod(String method) {
-    deliveryMethodNotifier.value = method;
+  void setPaymentMethod(String method) {
+    state = state.copyWith(paymentMethod: method);
   }
 
-  static double getShippingCost() {
-    if (deliveryMethodNotifier.value == 'Express') return 4.50;
+  void setDeliveryMethod(String method) {
+    state = state.copyWith(deliveryMethod: method);
+  }
+
+  double getShippingCost() {
+    if (state.deliveryMethod == 'Express') return 4.50;
     return 0.0;
   }
 
-  static bool isReadyToPay() {
-    return addressNotifier.value != null && paymentMethodNotifier.value != null;
+  bool isReadyToPay() {
+    return state.address != null && state.paymentMethod != null;
   }
 
-  static void reset() {
-    addressNotifier.value = null;
-    paymentMethodNotifier.value = null;
-    deliveryMethodNotifier.value = 'Standard';
+  void reset() {
+    state = CheckoutState();
   }
 }
+
+final checkoutProvider = NotifierProvider<CheckoutNotifier, CheckoutState>(() {
+  return CheckoutNotifier();
+});

@@ -1,43 +1,78 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MachineManager extends ChangeNotifier {
-  int _cupsMade = 0;
-  double _waterLevel = 1.0;
-  double _beansLevel = 1.0;
-  int _daysUntilClean = 30;
-  DateTime _lastCleanedDate = DateTime.now();
+class MachineState {
+  final int cupsMade;
+  final double waterLevel;
+  final double beansLevel;
+  final int daysUntilClean;
+  final DateTime lastCleanedDate;
+  final bool hasCup;
 
-  int get cupsMade => _cupsMade;
-  double get waterLevel => _waterLevel;
-  double get beansLevel => _beansLevel;
-  int get daysUntilClean => _daysUntilClean;
-  DateTime get lastCleanedDate => _lastCleanedDate;
-  bool get hasCup => true; // For now, assume a cup is always available
+  MachineState({
+    this.cupsMade = 0,
+    this.waterLevel = 1.0,
+    this.beansLevel = 1.0,
+    this.daysUntilClean = 30,
+    DateTime? lastCleanedDate,
+    this.hasCup = true,
+  }) : lastCleanedDate = lastCleanedDate ?? DateTime.now();
 
-  void makeCoffee() {
-    _cupsMade++;
-    _waterLevel = (_waterLevel - 0.1).clamp(0.0, 1.0);
-    _beansLevel = (_beansLevel - 0.1).clamp(0.0, 1.0);
-    
-    // Decrease days until clean every 5 cups
-    if (_cupsMade % 5 == 0) {
-      _daysUntilClean = (_daysUntilClean - 1).clamp(0, 30);
-    }
-    notifyListeners();
-  }
-
-  void refill() {
-    _waterLevel = 1.0;
-    _beansLevel = 1.0;
-    notifyListeners();
-  }
-
-  void cleanMachine() {
-    _daysUntilClean = 30;
-    _lastCleanedDate = DateTime.now();
-    notifyListeners();
+  MachineState copyWith({
+    int? cupsMade,
+    double? waterLevel,
+    double? beansLevel,
+    int? daysUntilClean,
+    DateTime? lastCleanedDate,
+    bool? hasCup,
+  }) {
+    return MachineState(
+      cupsMade: cupsMade ?? this.cupsMade,
+      waterLevel: waterLevel ?? this.waterLevel,
+      beansLevel: beansLevel ?? this.beansLevel,
+      daysUntilClean: daysUntilClean ?? this.daysUntilClean,
+      lastCleanedDate: lastCleanedDate ?? this.lastCleanedDate,
+      hasCup: hasCup ?? this.hasCup,
+    );
   }
 }
 
-// Global instance for simple access
-final machineManager = MachineManager();
+class MachineNotifier extends Notifier<MachineState> {
+  @override
+  MachineState build() {
+    return MachineState();
+  }
+
+  void makeCoffee() {
+    final cups = state.cupsMade + 1;
+    final water = (state.waterLevel - 0.1).clamp(0.0, 1.0);
+    final beans = (state.beansLevel - 0.1).clamp(0.0, 1.0);
+    int days = state.daysUntilClean;
+    
+    if (cups % 5 == 0) {
+      days = (days - 1).clamp(0, 30);
+    }
+    
+    state = state.copyWith(
+      cupsMade: cups,
+      waterLevel: water,
+      beansLevel: beans,
+      daysUntilClean: days,
+    );
+  }
+
+  void refill() {
+    state = state.copyWith(waterLevel: 1.0, beansLevel: 1.0);
+  }
+
+  void cleanMachine() {
+    state = state.copyWith(
+      daysUntilClean: 30,
+      lastCleanedDate: DateTime.now(),
+    );
+  }
+}
+
+final machineProvider = NotifierProvider<MachineNotifier, MachineState>(() {
+  return MachineNotifier();
+});
+

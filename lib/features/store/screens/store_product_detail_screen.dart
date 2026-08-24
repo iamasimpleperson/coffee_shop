@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/cart_manager.dart';
 import '../models/store_product.dart';
 import 'package:coffee_shop/routes/auth_notifier.dart';
 
-class StoreProductDetailScreen extends StatefulWidget {
+class StoreProductDetailScreen extends ConsumerStatefulWidget {
   final String productId;
 
   const StoreProductDetailScreen({super.key, required this.productId});
 
   @override
-  State<StoreProductDetailScreen> createState() => _StoreProductDetailScreenState();
+  ConsumerState<StoreProductDetailScreen> createState() => _StoreProductDetailScreenState();
 }
 
-class _StoreProductDetailScreenState extends State<StoreProductDetailScreen> {
+class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScreen> {
   int _quantity = 1;
   String _selectedSize = '';
 
@@ -221,7 +222,7 @@ class _StoreProductDetailScreenState extends State<StoreProductDetailScreen> {
                           height: 56,
                           child: ElevatedButton(
                             onPressed: () {
-                              if (!authNotifier.isAuthenticated) {
+                              if (!ref.read(authProvider).isAuthenticated) {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
@@ -241,7 +242,7 @@ class _StoreProductDetailScreenState extends State<StoreProductDetailScreen> {
                                 );
                                 return;
                               }
-                              CartManager.addToCart(product, _selectedSize, _quantity);
+                              ref.read(cartProvider.notifier).addToCart(product, _selectedSize, _quantity);
                               context.pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Added $_quantity item(s) to cart!')),

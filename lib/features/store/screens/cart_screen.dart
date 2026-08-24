@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/cart_manager.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cartItems = ref.watch(cartProvider);
+    final total = ref.watch(cartTotalProvider);
     return Container(
       width: double.infinity,
       height: MediaQuery.of(context).size.height * 0.85,
@@ -54,9 +57,8 @@ class CartScreen extends StatelessWidget {
 
           // Cart Items List
           Expanded(
-            child: ValueListenableBuilder<List<CartItem>>(
-              valueListenable: CartManager.cartItemsNotifier,
-              builder: (context, cartItems, child) {
+            child: Builder(
+              builder: (context) {
                 if (cartItems.isEmpty) {
                   return const Center(
                     child: Text(
@@ -112,7 +114,7 @@ class CartScreen extends StatelessWidget {
                                       ),
                                     ),
                                     GestureDetector(
-                                      onTap: () => CartManager.removeItem(item),
+                                      onTap: () => ref.read(cartProvider.notifier).removeItem(item),
                                       child: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
                                     ),
                                   ],
@@ -135,7 +137,7 @@ class CartScreen extends StatelessWidget {
                                     Row(
                                       children: [
                                         GestureDetector(
-                                          onTap: () => CartManager.updateQuantity(item, -1),
+                                          onTap: () => ref.read(cartProvider.notifier).updateQuantity(item, -1),
                                           child: Container(
                                             padding: const EdgeInsets.all(4),
                                             decoration: BoxDecoration(
@@ -149,7 +151,7 @@ class CartScreen extends StatelessWidget {
                                         Text('${item.quantity}', style: const TextStyle(fontWeight: FontWeight.bold)),
                                         const SizedBox(width: 12),
                                         GestureDetector(
-                                          onTap: () => CartManager.updateQuantity(item, 1),
+                                          onTap: () => ref.read(cartProvider.notifier).updateQuantity(item, 1),
                                           child: Container(
                                             padding: const EdgeInsets.all(4),
                                             decoration: BoxDecoration(
@@ -176,12 +178,9 @@ class CartScreen extends StatelessWidget {
           ),
 
           // Checkout Bottom Section
-          ValueListenableBuilder<List<CartItem>>(
-            valueListenable: CartManager.cartItemsNotifier,
-            builder: (context, cartItems, child) {
+          Builder(
+            builder: (context) {
               if (cartItems.isEmpty) return const SizedBox.shrink();
-
-              final total = CartManager.getTotalPrice();
 
               return Column(
                 children: [

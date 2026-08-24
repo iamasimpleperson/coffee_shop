@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/favorites_manager.dart';
 import '../../coffee/screens/choose_coffee.dart';
 import '../../coffee/screens/coffee_detail.dart';
 
-class FavouriteWidget extends StatelessWidget {
+class FavouriteWidget extends ConsumerWidget {
   const FavouriteWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -36,9 +37,9 @@ class FavouriteWidget extends StatelessWidget {
         const SizedBox(height: 16),
         SizedBox(
           height: 260, // Increased height to accommodate image and new layout
-          child: ValueListenableBuilder<List<CoffeeOption>>(
-            valueListenable: FavoritesManager.favoritesNotifier,
-            builder: (context, favorites, child) {
+          child: Builder(
+            builder: (context) {
+              final favorites = ref.watch(favoritesProvider);
               if (favorites.isEmpty) {
                 return const Center(
                   child: Text(
@@ -64,9 +65,9 @@ class FavouriteWidget extends StatelessWidget {
                     },
                     child: _buildFavouriteCard(
                       context: context,
-                      size: 'M',
+                      size: option.size?.substring(0, 1) ?? 'M',
                       title: option.name.replaceAll('\n', ' '),
-                      subtitle: 'Your favorite',
+                      subtitle: option.flavor ?? 'Your favorite',
                       icon: option.icon,
                       isDefault: index == 0,
                     ),

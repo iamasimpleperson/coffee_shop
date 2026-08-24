@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'coffee_detail.dart';
+import '../../../services/mock_data_service.dart';
+import '../../../models/coffee_model.dart';
 
 // Mock model for API data
 class CoffeeOption {
@@ -7,27 +9,19 @@ class CoffeeOption {
   final String name;
   // We use IconData for now as a placeholder for an image URL from an API.
   final IconData icon;
+  final String? size;
+  final String? flavor;
 
-  CoffeeOption({required this.id, required this.name, required this.icon});
+  CoffeeOption({
+    required this.id,
+    required this.name,
+    required this.icon,
+    this.size,
+    this.flavor,
+  });
 }
 
-// Mock API response
-final List<CoffeeOption> mockCoffeeOptions = [
-  CoffeeOption(id: '1', name: 'Cappuccino', icon: Icons.coffee),
-  CoffeeOption(id: '2', name: 'Latte', icon: Icons.local_cafe),
-  CoffeeOption(id: '3', name: 'Latte\nMacchiato', icon: Icons.coffee_maker),
-  CoffeeOption(id: '4', name: 'Espresso', icon: Icons.local_cafe_outlined),
-  CoffeeOption(
-    id: '5',
-    name: 'Double\nEspresso',
-    icon: Icons.emoji_food_beverage,
-  ),
-  CoffeeOption(
-    id: '6',
-    name: 'Americano',
-    icon: Icons.emoji_food_beverage_outlined,
-  ),
-];
+
 
 class ChooseCoffee extends StatelessWidget {
   const ChooseCoffee({super.key});
@@ -72,19 +66,52 @@ class ChooseCoffee extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 0.95,
-            ),
-            itemCount: mockCoffeeOptions.length,
-            itemBuilder: (context, index) {
-              final option = mockCoffeeOptions[index];
-              return _buildCoffeeCard(context, option);
+          FutureBuilder<List<CoffeeModel>>(
+            future: MockDataService.getCoffees(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              } else if (snapshot.hasError) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: Center(child: Text('Error: ${snapshot.error}')),
+                );
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40),
+                  child: Center(child: Text('No coffees available.')),
+                );
+              }
+
+              final coffees = snapshot.data!;
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 0.95,
+                ),
+                itemCount: coffees.length,
+                itemBuilder: (context, index) {
+                  final model = coffees[index];
+                  // Map CoffeeModel to CoffeeOption for now
+                  IconData iconData = Icons.coffee;
+                  if (model.name.contains('Latte')) iconData = Icons.local_cafe;
+                  if (model.name.contains('Espresso')) iconData = Icons.local_cafe_outlined;
+                  
+                  final option = CoffeeOption(
+                    id: model.id,
+                    name: model.name,
+                    icon: iconData,
+                  );
+                  return _buildCoffeeCard(context, option);
+                },
+              );
             },
           ),
           const SizedBox(height: 16),

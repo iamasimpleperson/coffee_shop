@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cart_manager.dart';
 import '../features/store/models/store_product.dart';
@@ -31,10 +31,13 @@ class OrderModel {
   }
 }
 
-class OrderHistoryManager {
-  static final ValueNotifier<List<OrderModel>> ordersNotifier = ValueNotifier<List<OrderModel>>([]);
+class OrderHistoryNotifier extends Notifier<List<OrderModel>> {
+  @override
+  List<OrderModel> build() {
+    return [];
+  }
 
-  static Future<void> init() async {
+  Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     final String? ordersJson = prefs.getString('order_history');
     
@@ -62,15 +65,15 @@ class OrderHistoryManager {
           ));
         }
         
-        ordersNotifier.value = loadedOrders;
+        state = loadedOrders;
       } catch (e) {
         // Corrupted JSON
       }
     }
   }
 
-  static Future<void> addOrder(double total, List<CartItem> items) async {
-    final current = List<OrderModel>.from(ordersNotifier.value);
+  Future<void> addOrder(double total, List<CartItem> items) async {
+    final current = List<OrderModel>.from(state);
     final order = OrderModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       date: DateTime.now(),
@@ -79,10 +82,14 @@ class OrderHistoryManager {
     );
     
     current.insert(0, order);
-    ordersNotifier.value = current;
+    state = current;
     
     final prefs = await SharedPreferences.getInstance();
     final data = current.map((e) => e.toJson()).toList();
     await prefs.setString('order_history', jsonEncode(data));
   }
 }
+
+final orderHistoryProvider = NotifierProvider<OrderHistoryNotifier, List<OrderModel>>(() {
+  return OrderHistoryNotifier();
+});

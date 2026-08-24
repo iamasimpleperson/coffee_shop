@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/checkout_manager.dart';
 
-class PaymentBottomSheet extends StatefulWidget {
+class PaymentBottomSheet extends ConsumerStatefulWidget {
   const PaymentBottomSheet({super.key});
 
   @override
-  State<PaymentBottomSheet> createState() => _PaymentBottomSheetState();
+  ConsumerState<PaymentBottomSheet> createState() => _PaymentBottomSheetState();
 }
 
-class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
+class _PaymentBottomSheetState extends ConsumerState<PaymentBottomSheet> {
   String _selectedMethod = 'Apple Pay';
 
   @override
   void initState() {
     super.initState();
-    if (CheckoutManager.paymentMethodNotifier.value != null) {
-      _selectedMethod = CheckoutManager.paymentMethodNotifier.value!;
+    final currentMethod = ref.read(checkoutProvider).paymentMethod;
+    if (currentMethod != null) {
+      _selectedMethod = currentMethod;
     }
   }
 
   void _onDone() {
-    CheckoutManager.setPaymentMethod(_selectedMethod);
+    ref.read(checkoutProvider.notifier).setPaymentMethod(_selectedMethod);
     Navigator.pop(context);
   }
 

@@ -1,17 +1,15 @@
 import 'package:coffee_shop/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../models/machine_manager.dart';
 
-class MachineBloc extends StatefulWidget {
+class MachineBloc extends ConsumerWidget {
   const MachineBloc({super.key});
 
   @override
-  State<MachineBloc> createState() => _MachineBlocState();
-}
-
-class _MachineBlocState extends State<MachineBloc> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final machine = ref.watch(machineProvider);
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -84,13 +82,15 @@ class _MachineBlocState extends State<MachineBloc> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           _buildIndicator(
+                            context,
                             Icons.water_drop,
-                            1.0,
+                            machine.waterLevel,
                             const Color(0xFF6AC79E),
                           ),
                           _buildIndicator(
+                            context,
                             Icons.coffee,
-                            0.6,
+                            machine.beansLevel,
                             const Color(0xFF6AC79E),
                           ),
                         ],
@@ -100,11 +100,13 @@ class _MachineBlocState extends State<MachineBloc> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           _buildIndicator(
+                            context,
                             Icons.auto_awesome,
                             1.0,
                             const Color(0xFF6AC79E),
                           ),
                           _buildIndicator(
+                            context,
                             Icons.local_cafe,
                             1.0,
                             const Color(0xFF6AC79E),
@@ -122,7 +124,7 @@ class _MachineBlocState extends State<MachineBloc> {
     );
   }
 
-  Widget _buildIndicator(IconData icon, double progress, Color color) {
+  Widget _buildIndicator(BuildContext context, IconData icon, double progress, Color color) {
     return Stack(
       alignment: Alignment.center,
       children: [

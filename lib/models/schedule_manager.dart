@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../routes/app_routes.dart';
 
 class ScheduleModel {
@@ -22,49 +23,51 @@ class ScheduleModel {
   });
 }
 
-class ScheduleManager {
-  static final ValueNotifier<List<ScheduleModel>> schedulesNotifier =
-      ValueNotifier<List<ScheduleModel>>([]);
+class ScheduleNotifier extends Notifier<List<ScheduleModel>> {
+  Timer? _timer;
 
-  static Timer? _timer;
+  @override
+  List<ScheduleModel> build() {
+    return [];
+  }
 
-  static void init() {
+  void init() {
     // Check every 10 seconds to ensure we don't miss the minute mark
     _timer ??= Timer.periodic(const Duration(seconds: 10), (timer) {
       _checkSchedules();
     });
   }
 
-  static void addSchedule(ScheduleModel schedule) {
-    final current = List<ScheduleModel>.from(schedulesNotifier.value);
+  void addSchedule(ScheduleModel schedule) {
+    final current = List<ScheduleModel>.from(state);
     current.add(schedule);
-    schedulesNotifier.value = current;
+    state = current;
   }
 
-  static void updateSchedule(ScheduleModel updatedSchedule) {
-    final current = List<ScheduleModel>.from(schedulesNotifier.value);
+  void updateSchedule(ScheduleModel updatedSchedule) {
+    final current = List<ScheduleModel>.from(state);
     final index = current.indexWhere((s) => s.id == updatedSchedule.id);
     if (index != -1) {
       current[index] = updatedSchedule;
-      schedulesNotifier.value = current;
+      state = current;
     }
   }
 
-  static void toggleSchedule(String id, bool isActive) {
-    final current = List<ScheduleModel>.from(schedulesNotifier.value);
+  void toggleSchedule(String id, bool isActive) {
+    final current = List<ScheduleModel>.from(state);
     final index = current.indexWhere((s) => s.id == id);
     if (index != -1) {
       current[index].isActive = isActive;
       current[index].hasAlertedToday = false; // Reset when toggled
-      schedulesNotifier.value = current;
+      state = current;
     }
   }
 
-  static void _checkSchedules() {
+  void _checkSchedules() {
     final now = DateTime.now();
     final currentDay = now.weekday; // 1 = Monday, 7 = Sunday
 
-    for (var schedule in schedulesNotifier.value) {
+    for (var schedule in state) {
       if (!schedule.isActive) continue;
 
       // Check if it's the right day
@@ -85,7 +88,7 @@ class ScheduleManager {
     }
   }
 
-  static void _showAlert(ScheduleModel schedule) {
+  void _showAlert(ScheduleModel schedule) {
     final context = rootNavigatorKey.currentContext;
     if (context == null) return;
 
@@ -135,3 +138,7 @@ class ScheduleManager {
     );
   }
 }
+
+final scheduleProvider = NotifierProvider<ScheduleNotifier, List<ScheduleModel>>(() {
+  return ScheduleNotifier();
+});

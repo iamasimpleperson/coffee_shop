@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/order_history_manager.dart';
 
-class OrderHistoryScreen extends StatelessWidget {
+class OrderHistoryScreen extends ConsumerWidget {
   const OrderHistoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Order History'),
@@ -17,9 +18,9 @@ class OrderHistoryScreen extends StatelessWidget {
           onPressed: () => context.pop(),
         ),
       ),
-      body: ValueListenableBuilder<List<OrderModel>>(
-        valueListenable: OrderHistoryManager.ordersNotifier,
-        builder: (context, orders, child) {
+      body: Builder(
+        builder: (context) {
+          final orders = ref.watch(orderHistoryProvider);
           if (orders.isEmpty) {
             return Center(
               child: Column(

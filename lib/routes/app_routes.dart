@@ -4,11 +4,12 @@ import 'package:coffee_shop/routes/modules/auth_route.dart';
 import 'package:coffee_shop/routes/modules/shop_route.dart';
 import 'package:coffee_shop/routes/modules/onbording_route.dart';
 import 'package:coffee_shop/routes/route_name.dart';
-import '../features/cart/screens/checkout_screen.dart';
+import '../features/cart/screens/cart_screen.dart';
 import '../features/profile/screens/profile_screen.dart';
 import '../features/profile/screens/order_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'auth_notifier.dart';
 
@@ -28,57 +29,71 @@ const List<String> publicRoutes = [
   '/order-history',
 ];
 
-final GoRouter appRouter = GoRouter(
-  navigatorKey: rootNavigatorKey,
-  initialLocation: AppRoutes.root,
-  refreshListenable: authNotifier,
-  errorBuilder: (context, state) => Scaffold(
-    body: Center(child: Text('Page not found: ${state.uri.toString()}')),
-  ),
-  redirect: (BuildContext context, GoRouterState state) {
-    final bool loggedIn = authNotifier.isAuthenticated;
-    final String location = state.matchedLocation;
+class RouterNotifier extends ChangeNotifier {
+  final Ref _ref;
 
-    final bool isPublicRoute = publicRoutes.any(
-      (route) => route == '/' ? location == '/' : location.startsWith(route),
-    );
-    final bool isAuthScreen =
-        location == AppRoutes.login || location == AppRoutes.register;
+  RouterNotifier(this._ref) {
+    _ref.listen<AuthState>(authProvider, (_, __) {
+      notifyListeners();
+    });
+  }
+}
 
-    // 1. Block unauthenticated access to private pages
-    if (!loggedIn && !isPublicRoute) {
-      return AppRoutes.login;
-    }
+final routerProvider = Provider<GoRouter>((ref) {
+  final notifier = RouterNotifier(ref);
 
-    // 2. Redirect logged-in users away from login/register screens and root
-    if (loggedIn && (isAuthScreen || location == AppRoutes.root)) {
-      return AppRoutes.home;
-    }
-
-    // 3. Allow access
-    return null;
-  },
-  routes: [
-    GoRoute(
-      path: AppRoutes.root,
-      builder: (context, state) => const WelcomeScreen(),
+  return GoRouter(
+    navigatorKey: rootNavigatorKey,
+    initialLocation: AppRoutes.root,
+    refreshListenable: notifier,
+    errorBuilder: (context, state) => Scaffold(
+      body: Center(child: Text('Page not found: ${state.uri.toString()}')),
     ),
-    GoRoute(
-      path: AppRoutes.machine,
-      builder: (context, state) => const MachineScreen(),
-    ),
-    GoRoute(
-      path: '/profile',
-      builder: (context, state) => const ProfileScreen(),
-    ),
-    GoRoute(
-      path: '/order-history',
-      builder: (context, state) => const OrderHistoryScreen(),
-    ),
+    redirect: (BuildContext context, GoRouterState state) {
+      final bool loggedIn = ref.read(authProvider).isAuthenticated;
+      final String location = state.matchedLocation;
 
-    // Merge module route lists
-    ...authRoutes,
-    ...shopRoutes,
-    ...onbordingRoutes,
-  ],
-);
+      final bool isPublicRoute = publicRoutes.any(
+        (route) => route == '/' ? location == '/' : location.startsWith(route),
+      );
+      final bool isAuthScreen =
+          location == AppRoutes.login || location == AppRoutes.register;
+
+      // 1. Block unauthenticated access to private pages
+      if (!loggedIn && !isPublicRoute) {
+        return AppRoutes.login;
+      }
+
+      // 2. Redirect logged-in users away from login/register screens and root
+      if (loggedIn && (isAuthScreen || location == AppRoutes.root)) {
+        return AppRoutes.home;
+      }
+
+      // 3. Allow access
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: AppRoutes.root,
+        builder: (context, state) => const WelcomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.machine,
+        builder: (context, state) => const MachineScreen(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: '/order-history',
+        builder: (context, state) => const OrderHistoryScreen(),
+      ),
+
+      // Merge module route lists
+      ...authRoutes,
+      ...shopRoutes,
+      ...onbordingRoutes,
+    ],
+  );
+});

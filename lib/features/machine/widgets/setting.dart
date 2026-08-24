@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:coffee_shop/models/machine_manager.dart';
 
-class SettingsWidget extends StatelessWidget {
+class SettingsWidget extends ConsumerWidget {
   const SettingsWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
@@ -33,14 +34,14 @@ class SettingsWidget extends StatelessWidget {
                 _buildSettingItem(context, 'Preferences', () {}),
                 const Divider(height: 1, color: Color(0xFFF0F0F0)),
                 _buildSettingItem(context, 'Refill Water & Beans', () {
-                  machineManager.refill();
+                  ref.read(machineProvider.notifier).refill();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Machine refilled!')),
                   );
                 }),
                 const Divider(height: 1, color: Color(0xFFF0F0F0)),
                 _buildSettingItem(context, 'Clean Machine', () {
-                  machineManager.cleanMachine();
+                  ref.read(machineProvider.notifier).cleanMachine();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Machine cleaned!')),
                   );

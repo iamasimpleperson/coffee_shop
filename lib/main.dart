@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'routes/app_routes.dart';
 import 'routes/auth_notifier.dart';
@@ -10,32 +11,33 @@ import 'core/theme/theme_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await authNotifier.init();
-  await FavoritesManager.init();
-  await CartManager.init();
-  await OrderHistoryManager.init();
-  await themeNotifier.init();
-  ScheduleManager.init();
-  runApp(const MyApp());
+
+  final container = ProviderContainer();
+  await container.read(authProvider.notifier).init();
+  await container.read(favoritesProvider.notifier).init();
+  await container.read(cartProvider.notifier).init();
+  await container.read(orderHistoryProvider.notifier).init();
+  await container.read(themeProvider.notifier).init();
+  container.read(scheduleProvider.notifier).init();
+
+  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: themeNotifier,
-      builder: (context, _) {
-        return MaterialApp.router(
-          title: 'Coffee Shop',
-          debugShowCheckedModeBanner: false,
-          routerConfig: appRouter,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeNotifier.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        );
-      },
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDarkMode = ref.watch(themeProvider);
+    final router = ref.watch(routerProvider);
+
+    return MaterialApp.router(
+      title: 'Coffee Shop',
+      debugShowCheckedModeBanner: false,
+      routerConfig: router,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
     );
   }
 }

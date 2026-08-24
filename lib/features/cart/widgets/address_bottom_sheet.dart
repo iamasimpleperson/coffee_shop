@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/checkout_manager.dart';
 
-class AddressBottomSheet extends StatefulWidget {
+class AddressBottomSheet extends ConsumerStatefulWidget {
   const AddressBottomSheet({super.key});
 
   @override
-  State<AddressBottomSheet> createState() => _AddressBottomSheetState();
+  ConsumerState<AddressBottomSheet> createState() => _AddressBottomSheetState();
 }
 
-class _AddressBottomSheetState extends State<AddressBottomSheet> {
+class _AddressBottomSheetState extends ConsumerState<AddressBottomSheet> {
   final TextEditingController _firstNameController = TextEditingController(text: 'John');
   final TextEditingController _surnameController = TextEditingController(text: 'Doe');
   final TextEditingController _postCodeController = TextEditingController(text: 'W1B 3EL');
@@ -36,7 +37,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet> {
       county: _countyController.text.trim(),
       city: _cityController.text.trim(),
     );
-    CheckoutManager.setAddress(address);
+    ref.read(checkoutProvider.notifier).setAddress(address);
     Navigator.pop(context);
   }
 

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:coffee_shop/routes/route_name.dart';
 import 'package:coffee_shop/routes/auth_notifier.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
@@ -32,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await authNotifier.login(email, password);
+      await ref.read(authProvider.notifier).login(email, password);
       // GoRouter redirect handles navigation automatically
     } catch (e) {
       if (mounted) {

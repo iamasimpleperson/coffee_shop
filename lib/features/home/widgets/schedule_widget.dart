@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/schedule_manager.dart';
 import 'add_schedule_bottom_sheet.dart';
 import 'package:coffee_shop/routes/auth_notifier.dart';
 import 'package:go_router/go_router.dart';
 
-class ScheduleWidget extends StatelessWidget {
+class ScheduleWidget extends ConsumerWidget {
   const ScheduleWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Row(
@@ -20,7 +21,7 @@ class ScheduleWidget extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-                if (!authNotifier.isAuthenticated) {
+                if (!ref.read(authProvider).isAuthenticated) {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -54,9 +55,9 @@ class ScheduleWidget extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        ValueListenableBuilder<List<ScheduleModel>>(
-          valueListenable: ScheduleManager.schedulesNotifier,
-          builder: (context, schedules, child) {
+        Builder(
+          builder: (context) {
+            final schedules = ref.watch(scheduleProvider);
             if (schedules.isEmpty) {
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),
@@ -78,7 +79,7 @@ class ScheduleWidget extends StatelessWidget {
 
                 return GestureDetector(
                   onTap: () {
-                    if (!authNotifier.isAuthenticated) {
+                    if (!ref.read(authProvider).isAuthenticated) {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
@@ -162,7 +163,7 @@ class ScheduleWidget extends StatelessWidget {
                       Switch(
                         value: schedule.isActive,
                         onChanged: (bool value) {
-                          if (!authNotifier.isAuthenticated) {
+                          if (!ref.read(authProvider).isAuthenticated) {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
@@ -182,7 +183,7 @@ class ScheduleWidget extends StatelessWidget {
                             );
                             return;
                           }
-                          ScheduleManager.toggleSchedule(schedule.id, value);
+                          ref.read(scheduleProvider.notifier).toggleSchedule(schedule.id, value);
                         },
                         activeColor: Colors.white,
                         activeTrackColor: const Color(0xFF6AC79E),

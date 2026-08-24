@@ -2,16 +2,17 @@ import 'package:coffee_shop/routes/auth_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/theme_notifier.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   bool _isLoading = false;
@@ -19,7 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final user = authNotifier.currentUser;
+    final user = ref.read(authProvider).currentUser;
     if (user != null) {
       _nameController.text = user.name;
       _emailController.text = user.email;
@@ -49,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       // Simulate network request
       await Future.delayed(const Duration(milliseconds: 500));
-      await authNotifier.updateProfile(name, email);
+      await ref.read(authProvider.notifier).updateProfile(name, email);
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -69,8 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _logout() {
-    // Calling logout updates the authNotifier which triggers GoRouter redirect
-    authNotifier.logout();
+    ref.read(authProvider.notifier).logout();
   }
 
   @override
@@ -93,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: authNotifier.isAuthenticated
+          child: ref.watch(authProvider).isAuthenticated
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -101,11 +101,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       radius: 50,
                       child: Icon(Icons.person, size: 50),
                     ),
-                    if (authNotifier.currentUser?.registeredDate != null) ...[
+                    if (ref.watch(authProvider).currentUser?.registeredDate != null) ...[
                       const SizedBox(height: 16),
                       Center(
                         child: Text(
-                          'Member since: ${DateFormat('MMMM d, yyyy').format(authNotifier.currentUser!.registeredDate!)}',
+                          'Member since: ${DateFormat('MMMM d, yyyy').format(ref.watch(authProvider).currentUser!.registeredDate!)}',
                           style: const TextStyle(color: Colors.grey, fontSize: 14),
                         ),
                       ),
@@ -165,15 +165,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                     ),
                     const SizedBox(height: 16),
-                    ListenableBuilder(
-                      listenable: themeNotifier,
-                      builder: (context, _) {
+                    Builder(
+                      builder: (context) {
+                        final isDark = ref.watch(themeProvider);
                         return SwitchListTile(
                           title: const Text('Dark Mode'),
                           secondary: const Icon(Icons.dark_mode),
-                          value: themeNotifier.isDarkMode,
+                          value: isDark,
                           onChanged: (val) {
-                            themeNotifier.toggleTheme();
+                            ref.read(themeProvider.notifier).toggleTheme();
                           },
                           contentPadding: EdgeInsets.zero,
                         );
