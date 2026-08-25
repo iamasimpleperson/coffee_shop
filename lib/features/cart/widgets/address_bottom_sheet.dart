@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../models/checkout_manager.dart';
+import '../models/checkout_manager.dart';
 
 class AddressBottomSheet extends ConsumerStatefulWidget {
   const AddressBottomSheet({super.key});

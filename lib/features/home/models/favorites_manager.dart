@@ -3,7 +3,7 @@ import 'package:coffee_shop/services/mock_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../features/coffee/screens/choose_coffee.dart';
+import '../../coffee/screens/choose_coffee.dart';
 
 class FavoritesNotifier extends Notifier<List<CoffeeOption>> {
   @override

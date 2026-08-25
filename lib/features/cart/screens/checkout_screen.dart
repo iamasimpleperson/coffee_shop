@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../models/cart_manager.dart';
-import '../../../models/checkout_manager.dart';
+import '../models/cart_manager.dart';
+import '../models/checkout_manager.dart';
 import '../../../models/order_history_manager.dart';
 import '../widgets/address_bottom_sheet.dart';
 import '../widgets/payment_bottom_sheet.dart';

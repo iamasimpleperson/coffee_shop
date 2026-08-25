@@ -4,8 +4,8 @@ import 'core/theme/app_theme.dart';
 import 'routes/app_routes.dart';
 import 'routes/auth_notifier.dart';
 import 'models/schedule_manager.dart';
-import 'models/favorites_manager.dart';
-import 'models/cart_manager.dart';
+import 'features/home/models/favorites_manager.dart';
+import 'features/cart/models/cart_manager.dart';
 import 'models/order_history_manager.dart';
 import 'core/theme/theme_notifier.dart';
 

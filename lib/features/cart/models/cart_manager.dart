@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../features/store/models/store_product.dart';
+import '../../store/models/store_product.dart';
 
 class CartItem {
   final StoreProduct product;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../models/favorites_manager.dart';
+import '../models/favorites_manager.dart';
 import '../../coffee/screens/choose_coffee.dart';
 import '../../coffee/screens/coffee_detail.dart';
 

@@ -1,4 +1,4 @@
-import 'coffee_model.dart';
+import '../../../models/coffee_model.dart';
 
 class CartItemModel {
   final String id;

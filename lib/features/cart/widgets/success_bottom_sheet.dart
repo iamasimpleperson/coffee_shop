@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../models/cart_manager.dart';
-import '../../../models/checkout_manager.dart';
+import '../models/cart_manager.dart';
+import '../models/checkout_manager.dart';
 import '../../../routes/route_name.dart';
 
 class SuccessBottomSheet extends ConsumerWidget {

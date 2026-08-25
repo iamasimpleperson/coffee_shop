@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../routes/route_name.dart';
-import '../../../models/cart_manager.dart';
+import '../../cart/models/cart_manager.dart';
 import '../../../services/mock_data_service.dart';
 import '../models/store_product.dart';
 import 'cart_screen.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:coffee_shop/models/machine_manager.dart';
+import 'package:coffee_shop/features/machine/models/machine_manager.dart';
 
 class SettingsWidget extends ConsumerWidget {
   const SettingsWidget({super.key});

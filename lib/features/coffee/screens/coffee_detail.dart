@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'choose_coffee.dart';
-import '../../../models/favorites_manager.dart';
+import '../../home/models/favorites_manager.dart';
 import 'package:coffee_shop/routes/auth_notifier.dart';
-import 'package:coffee_shop/models/machine_manager.dart';
+import 'package:coffee_shop/features/machine/models/machine_manager.dart';
 import 'package:go_router/go_router.dart';
 
 class CoffeeDetail extends ConsumerStatefulWidget {

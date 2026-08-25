@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../models/checkout_manager.dart';
+import '../models/checkout_manager.dart';
 
 class PaymentBottomSheet extends ConsumerStatefulWidget {
   const PaymentBottomSheet({super.key});
