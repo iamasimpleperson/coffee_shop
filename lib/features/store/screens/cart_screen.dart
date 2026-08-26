@@ -73,7 +73,7 @@ class CartScreen extends ConsumerWidget {
                   itemCount: cartItems.length,
                   itemBuilder: (context, index) {
                     final item = cartItems[index];
-                    final isBeans = item.product.category == 'Beans';
+                    final isBeans = item.product.categoryid == 0 || item.product.categoryid == 1;
                     final placeholderColor = isBeans ? const Color(0xFFFFECCC) : const Color(0xFFF0F2F5);
                     final icon = isBeans ? Icons.coffee_maker : Icons.sanitizer;
 

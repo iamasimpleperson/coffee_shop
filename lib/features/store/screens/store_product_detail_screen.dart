@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../cart/models/cart_manager.dart';
-import '../models/store_product.dart';
+import '../../../models/store_product_model.dart';
+import 'package:coffee_shop/services/coffee_service.dart';
 import 'package:coffee_shop/routes/auth_notifier.dart';
 import 'package:coffee_shop/l10n/app_localizations.dart';
 
@@ -18,27 +19,46 @@ class StoreProductDetailScreen extends ConsumerStatefulWidget {
 class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScreen> {
   int _quantity = 1;
   String _selectedSize = '';
+  StoreProductModel? _product;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    final product = mockStoreProducts.firstWhere(
-      (p) => p.id == widget.productId,
-      orElse: () => mockStoreProducts.first,
-    );
-    if (product.sizes.isNotEmpty) {
-      _selectedSize = product.sizes.first;
+    _loadProduct();
+  }
+
+  Future<void> _loadProduct() async {
+    final product = await CoffeeService().getCoffeeById(widget.productId);
+    if (mounted) {
+      setState(() {
+        _product = product;
+        if (product != null && product.sizes.isNotEmpty) {
+          _selectedSize = product.sizes.first;
+        }
+        _isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final product = mockStoreProducts.firstWhere(
-      (p) => p.id == widget.productId,
-      orElse: () => mockStoreProducts.first,
-    );
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
-    final isBeans = product.category == 'Beans';
+    if (_product == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Not Found')),
+        body: const Center(child: Text('Product not found.')),
+      );
+    }
+
+    final product = _product!;
+    final isBeans = product.categoryid == 0 || product.categoryid == 1;
     final placeholderColor = isBeans ? const Color(0xFFFFECCC) : const Color(0xFFF0F2F5);
     final icon = isBeans ? Icons.coffee_maker : Icons.sanitizer;
     final totalPrice = product.price * _quantity;
@@ -49,12 +69,25 @@ class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScr
         children: [
           // Background Placeholder Image
           Positioned(
-            top: 100,
+            top: 0,
             left: 0,
             right: 0,
+            height: MediaQuery.of(context).size.height * 0.45,
             child: Hero(
               tag: 'store_product_${product.id}',
-              child: Icon(icon, size: 200, color: Colors.black12),
+              child: Container(
+                decoration: BoxDecoration(
+                  image: product.image.isNotEmpty
+                      ? DecorationImage(
+                          image: NetworkImage(product.image),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                ),
+                child: product.image.isEmpty
+                    ? Center(child: Icon(icon, size: 200, color: Colors.black12))
+                    : null,
+              ),
             ),
           ),
           
@@ -99,7 +132,7 @@ class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScr
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    product.subtitle,
+                    'API Product', // Replacing product.subtitle
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -158,28 +191,6 @@ class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScr
                     style: TextStyle(fontSize: 14, color: Colors.grey[800], height: 1.5),
                   ),
                   const SizedBox(height: 24),
-
-                  if (product.taste != null) ...[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(AppLocalizations.of(context)?.taste ?? 'Taste', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                          Text(product.taste!, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                        ],
-                      ),
-                    const Divider(height: 24),
-                  ],
-                  
-                  if (product.sweetness != null) ...[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(AppLocalizations.of(context)?.sweetness ?? 'Sweetness', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                          Text(product.sweetness!, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                        ],
-                      ),
-                    const Divider(height: 24),
-                  ],
 
                   const Spacer(),
                   

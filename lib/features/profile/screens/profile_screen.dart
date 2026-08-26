@@ -21,9 +21,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final user = ref.read(authProvider).currentUser;
+    final authState = ref.read(authProvider);
+    final user = authState.currentUser;
     if (user != null) {
       _emailController.text = user.email;
+      if (authState.userName != null) {
+        _nameController.text = authState.userName!;
+      }
     }
   }
 

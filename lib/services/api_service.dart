@@ -24,6 +24,27 @@ class ApiService {
     return null;
   }
 
+  /// POST request to login a User
+  Future<UserModel?> login(String email, String password) async {
+    final data = await _client.postForm('/api/v1/login/access-token', {
+      'username': email, // OAuth2 specifies 'username'
+      'password': password,
+    });
+
+    if (data != null && data['access_token'] != null) {
+      _client.setToken(data['access_token']);
+      
+      // Now fetch the user data
+      final userData = await _client.get('/api/v1/users/me');
+      if (userData != null) {
+        return UserModel.fromJson(userData);
+      }
+    } else if (data != null && data['detail'] != null) {
+      throw Exception(data['detail'].toString());
+    }
+    return null;
+  }
+
   /// POST request to create a User
   Future<UserModel?> createUser(
     String email,
@@ -38,8 +59,10 @@ class ApiService {
       'is_guest': isGuest,
     });
 
-    if (data != null) {
+    if (data != null && data['detail'] == null) {
       return UserModel.fromJson(data);
+    } else if (data != null && data['detail'] != null) {
+      throw Exception(data['detail'].toString());
     }
     return null;
   }

@@ -1,15 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:coffee_shop/models/order_history_manager.dart';
-import 'package:coffee_shop/features/store/models/store_product.dart';
+import 'package:coffee_shop/models/store_product_model.dart';
+import 'package:coffee_shop/services/coffee_service.dart';
 
-final recommendationProvider = Provider<StoreProduct>((ref) {
+final recommendationProvider = FutureProvider<StoreProductModel>((ref) async {
   final orderHistory = ref.watch(orderHistoryProvider);
+  final coffees = await CoffeeService().getCoffees();
 
-  // If no order history, return a default premium blend (e.g. Sunshine blend - b3)
-  final defaultProduct = mockStoreProducts.firstWhere(
-    (p) => p.id == 'b3',
-    orElse: () => mockStoreProducts.first,
-  );
+  if (coffees.isEmpty) {
+    throw Exception('No coffees available for recommendation');
+  }
+
+  // If no order history, return a default premium blend (e.g. first one)
+  final defaultProduct = coffees.first;
 
   if (orderHistory.isEmpty) {
     return defaultProduct;
@@ -19,7 +22,7 @@ final recommendationProvider = Provider<StoreProduct>((ref) {
   final Map<String, int> productCounts = {};
   for (final order in orderHistory) {
     for (final item in order.items) {
-      if (item.product.category == 'Beans') {
+      if (item.product.categoryid == 0 || item.product.categoryid == 1) { // Beans
         productCounts[item.product.id] =
             (productCounts[item.product.id] ?? 0) + item.quantity;
       }
@@ -40,8 +43,8 @@ final recommendationProvider = Provider<StoreProduct>((ref) {
     }
   });
 
-  // Return the corresponding StoreProduct
-  return mockStoreProducts.firstWhere(
+  // Return the corresponding StoreProductModel
+  return coffees.firstWhere(
     (p) => p.id == topProductId,
     orElse: () => defaultProduct,
   );

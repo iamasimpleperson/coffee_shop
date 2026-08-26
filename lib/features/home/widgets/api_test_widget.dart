@@ -10,7 +10,7 @@ class ApiTestWidget extends StatefulWidget {
 
 class _ApiTestWidgetState extends State<ApiTestWidget> {
   final ApiService _apiService = ApiService();
-  
+
   bool _isLoading = false;
   String _responseLog = 'Press a button to test the API...';
 
@@ -35,7 +35,9 @@ class _ApiTestWidgetState extends State<ApiTestWidget> {
     setState(() => _isLoading = true);
     final user = await _apiService.fetchUser();
     if (user != null) {
-      _log('✅ GET User Success:\nEmail: ${user.email}\nAuth: ${user.authProvider}');
+      _log(
+        '✅ GET User Success:\nEmail: ${user.email}\nAuth: ${user.authProvider}',
+      );
     } else {
       _log('❌ GET User Failed (Check if user ID 1 exists)');
     }
@@ -50,7 +52,9 @@ class _ApiTestWidgetState extends State<ApiTestWidget> {
       false,
     );
     if (user != null) {
-      _log('✅ POST User Success:\nCreated ID: ${user.id}\nEmail: ${user.email}');
+      _log(
+        '✅ POST User Success:\nCreated ID: ${user.id}\nEmail: ${user.email}',
+      );
     } else {
       _log('❌ POST User Failed');
     }
@@ -77,11 +81,16 @@ class _ApiTestWidgetState extends State<ApiTestWidget> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
-              if (_isLoading) const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+              if (_isLoading)
+                const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Action Buttons
           Wrap(
             spacing: 8,
@@ -104,11 +113,14 @@ class _ApiTestWidgetState extends State<ApiTestWidget> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          const Text('Response Log:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+          const Text(
+            'Response Log:',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+          ),
           const SizedBox(height: 8),
-          
+
           // Response Log Box
           Container(
             width: double.infinity,
@@ -119,7 +131,11 @@ class _ApiTestWidgetState extends State<ApiTestWidget> {
             ),
             child: Text(
               _responseLog,
-              style: const TextStyle(color: Colors.greenAccent, fontFamily: 'monospace', fontSize: 13),
+              style: const TextStyle(
+                color: Colors.greenAccent,
+                fontFamily: 'monospace',
+                fontSize: 13,
+              ),
             ),
           ),
         ],
@@ -127,4 +143,3 @@ class _ApiTestWidgetState extends State<ApiTestWidget> {
     );
   }
 }
-

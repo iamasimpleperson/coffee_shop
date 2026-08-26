@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'coffee_detail.dart';
-import '../../../models/coffee_model.dart';
 import 'package:coffee_shop/l10n/app_localizations.dart';
 import 'package:coffee_shop/services/coffee_service.dart';
+import 'package:coffee_shop/models/store_product_model.dart';
+import 'coffee_detail.dart';
 
 // Mock model for API data
 class CoffeeOption {
@@ -22,10 +22,15 @@ class CoffeeOption {
   });
 }
 
-
-
-class ChooseCoffee extends StatelessWidget {
+class ChooseCoffee extends StatefulWidget {
   const ChooseCoffee({super.key});
+
+  @override
+  State<ChooseCoffee> createState() => _ChooseCoffeeState();
+}
+
+class _ChooseCoffeeState extends State<ChooseCoffee> {
+  String? _selectedCoffeeId;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +72,7 @@ class ChooseCoffee extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          FutureBuilder<List<CoffeeModel>>(
+          FutureBuilder<List<StoreProductModel>>(
             future: CoffeeService().getCoffees(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -78,78 +83,96 @@ class ChooseCoffee extends StatelessWidget {
               } else if (snapshot.hasError) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 40),
-                  child: Center(child: Text(AppLocalizations.of(context)?.error(snapshot.error.toString()) ?? 'Error: ${snapshot.error}')),
+                  child: Center(
+                    child: Text(
+                      AppLocalizations.of(
+                            context,
+                          )?.error(snapshot.error.toString()) ??
+                          'Error: ${snapshot.error}',
+                    ),
+                  ),
                 );
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 40),
-                  child: Center(child: Text(AppLocalizations.of(context)?.noCoffeesAvailable ?? 'No coffees available.')),
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40),
+                  child: Center(child: Text('No coffees available')),
                 );
               }
 
               final coffees = snapshot.data!;
+
               return GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 16,
+                  childAspectRatio: 0.85,
                   crossAxisSpacing: 16,
-                  childAspectRatio: 0.95,
+                  mainAxisSpacing: 16,
                 ),
                 itemCount: coffees.length,
                 itemBuilder: (context, index) {
-                  final model = coffees[index];
-                  // Map CoffeeModel to CoffeeOption for now
+                  final coffee = coffees[index];
+
+                  // Determine icon based on name (if API doesn't provide it)
                   IconData iconData = Icons.coffee;
-                  if (model.name.contains('Latte')) iconData = Icons.local_cafe;
-                  if (model.name.contains('Espresso')) iconData = Icons.local_cafe_outlined;
-                  
-                  final option = CoffeeOption(
-                    id: model.id,
-                    name: model.name,
-                    icon: iconData,
-                  );
-                  return _buildCoffeeCard(context, option);
+                  if (coffee.name.contains('Latte'))
+                    iconData = Icons.local_cafe;
+                  if (coffee.name.contains('Espresso'))
+                    iconData = Icons.local_cafe_outlined;
+
+                  return _buildCoffeeOption(coffee.id, coffee.name, iconData);
                 },
               );
             },
           ),
-          const SizedBox(height: 16),
         ],
       ),
     );
   }
 
-  Widget _buildCoffeeCard(BuildContext context, CoffeeOption option) {
+  Widget _buildCoffeeOption(String id, String label, IconData icon) {
+    final isSelected = _selectedCoffeeId == id;
+
     return GestureDetector(
       onTap: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          useRootNavigator: true,
-          backgroundColor: Colors.transparent,
-          builder: (context) => CoffeeDetail(coffee: option),
-        );
+        setState(() {
+          _selectedCoffeeId = id;
+        });
       },
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: const Color(0xFFF8F8F8),
+          color: isSelected ? const Color(0xFFC67C4E) : Colors.white,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? const Color(0xFFC67C4E) : Colors.grey.shade200,
+            width: 2,
+          ),
+          boxShadow: [
+            if (isSelected)
+              BoxShadow(
+                color: const Color(0xFFC67C4E).withValues(alpha: 0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(option.icon, size: 48, color: Colors.brown[400]),
-            const SizedBox(height: 16),
+            Icon(
+              icon,
+              size: 40,
+              color: isSelected ? Colors.white : const Color(0xFF2F2D2C),
+            ),
+            const SizedBox(height: 12),
             Text(
-              option.name,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                color: Colors.black87,
-                height: 1.2,
+              label,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: isSelected ? Colors.white : const Color(0xFF2F2D2C),
               ),
             ),
           ],

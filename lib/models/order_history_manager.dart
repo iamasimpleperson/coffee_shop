@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../features/cart/models/cart_manager.dart';
-import '../features/store/models/store_product.dart';
+import 'package:coffee_shop/services/coffee_service.dart';
 
 class OrderModel {
   final String id;
@@ -45,12 +45,13 @@ class OrderHistoryNotifier extends Notifier<List<OrderModel>> {
       try {
         final List<dynamic> decoded = jsonDecode(ordersJson);
         final List<OrderModel> loadedOrders = [];
+        final apiCoffees = await CoffeeService().getCoffees();
         
         for (var orderJson in decoded) {
           final List<CartItem> loadedItems = [];
           for (var item in orderJson['items']) {
             try {
-              final product = mockStoreProducts.firstWhere((p) => p.id == item['productId']);
+              final product = apiCoffees.firstWhere((p) => p.id == item['productId']);
               loadedItems.add(CartItem(product: product, size: item['size'], quantity: item['quantity']));
             } catch (e) {
               // Ignore missing products

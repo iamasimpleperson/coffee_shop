@@ -1,16 +1,28 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-/// A generic API client that handles all standard HTTP requests.
-/// All specific services (UserService, CoffeeService, etc.) should use this client.
 class ApiClient {
-  static const String baseUrl = 'https://coffee-maker-backend.onrender.com';
+  static final ApiClient _instance = ApiClient._internal();
+  factory ApiClient() => _instance;
+  ApiClient._internal();
 
-  Map<String, String> get _headers => {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    // 'Authorization': 'Bearer $_token', // Add token logic here later
-  };
+  static const String baseUrl = 'https://coffee-maker-backend.onrender.com';
+  String? _token;
+
+  void setToken(String? token) {
+    _token = token;
+  }
+
+  Map<String, String> get _headers {
+    final headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+    if (_token != null) {
+      headers['Authorization'] = 'Bearer $_token';
+    }
+    return headers;
+  }
 
   /// GET request helper
   Future<dynamic> get(String endpoint) async {
@@ -34,6 +46,24 @@ class ApiClient {
       return _processResponse(response);
     } catch (e) {
       print('POST Request Error ($endpoint): $e');
+      return null;
+    }
+  }
+
+  /// POST request helper for url-encoded forms (like OAuth2 login)
+  Future<dynamic> postForm(String endpoint, Map<String, String> body) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl$endpoint'),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: body,
+      );
+      return _processResponse(response);
+    } catch (e) {
+      print('POST Form Request Error ($endpoint): $e');
       return null;
     }
   }

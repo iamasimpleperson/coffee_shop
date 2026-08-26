@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../store/models/store_product.dart';
+import '../../../models/store_product_model.dart';
 import 'package:coffee_shop/services/coffee_service.dart';
 
 class CartItem {
-  final StoreProduct product;
+  final StoreProductModel product;
   final String size;
   int quantity;
 
@@ -33,19 +33,6 @@ class CartNotifier extends Notifier<List<CartItem>> {
         final List<dynamic> decoded = jsonDecode(cartJson);
         final List<CartItem> loadedItems = [];
         final apiCoffees = await CoffeeService().getCoffees();
-        
-        final allProducts = apiCoffees.map((coffee) => StoreProduct(
-          id: coffee.id,
-          name: coffee.name,
-          imageUrl: coffee.image,
-          category: 'Beans',
-          subtitle: 'From API',
-          description: '',
-          price: 0.0,
-        )).toList();
-        
-        // Add mock products just in case there are mock items in cart
-        allProducts.addAll(mockStoreProducts);
 
         for (var item in decoded) {
           final productId = item['productId'];
@@ -53,7 +40,7 @@ class CartNotifier extends Notifier<List<CartItem>> {
           final quantity = item['quantity'];
           
           try {
-            final product = allProducts.firstWhere((p) => p.id == productId);
+            final product = apiCoffees.firstWhere((p) => p.id == productId);
             loadedItems.add(CartItem(product: product, size: size, quantity: quantity));
           } catch (e) {
             // Product not found
@@ -79,7 +66,7 @@ class CartNotifier extends Notifier<List<CartItem>> {
     await prefs.setString('cart_items', jsonEncode(data));
   }
 
-  void addToCart(StoreProduct product, String size, int quantity) {
+  void addToCart(StoreProductModel product, String size, int quantity) {
     final currentList = List<CartItem>.from(state);
     
     final index = currentList.indexWhere((item) => item.product.id == product.id && item.size == size);

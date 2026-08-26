@@ -1,11 +1,10 @@
 import 'package:coffee_shop/services/coffee_service.dart';
-import 'package:coffee_shop/models/coffee_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../routes/route_name.dart';
 import '../../cart/models/cart_manager.dart';
-import '../models/store_product.dart';
+import '../../../models/store_product_model.dart';
 import 'cart_screen.dart';
 import 'package:coffee_shop/l10n/app_localizations.dart';
 
@@ -87,7 +86,7 @@ class StoreScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: FutureBuilder<List<CoffeeModel>>(
+      body: FutureBuilder<List<StoreProductModel>>(
         future: CoffeeService().getCoffees(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -98,19 +97,10 @@ class StoreScreen extends ConsumerWidget {
             return Center(child: Text(AppLocalizations.of(context)?.noProductsAvailable ?? 'No products available.'));
           }
 
-          // Convert CoffeeModels from the API into StoreProducts for the UI
-          final products = snapshot.data!.map((coffee) => StoreProduct(
-            id: coffee.id,
-            name: coffee.name,
-            imageUrl: coffee.image,
-            category: 'Beans',
-            subtitle: 'From API',
-            description: '',
-            price: 0.0,
-          )).toList();
-
-          final beans = products.where((p) => p.category == 'Beans').toList();
-          final care = products.where((p) => p.category == 'Care').toList(); // Will be empty unless added to API
+          final products = snapshot.data!;
+          // Using category_id to distinguish between Beans and Care. Let's assume categoryid == 1 is Beans
+          final beans = products.where((p) => p.categoryid == 0 || p.categoryid == 1).toList();
+          final care = products.where((p) => p.categoryid == 2).toList(); 
 
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -119,8 +109,10 @@ class StoreScreen extends ConsumerWidget {
               children: [
                 _buildSection(context, 'Beans', beans),
                 const SizedBox(height: 32),
-                _buildSection(context, 'Care', care),
-                const SizedBox(height: 32),
+                if (care.isNotEmpty) ...[
+                  _buildSection(context, 'Care', care),
+                  const SizedBox(height: 32),
+                ]
               ],
             ),
           );
@@ -129,7 +121,8 @@ class StoreScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, String title, List<StoreProduct> products) {
+  Widget _buildSection(BuildContext context, String title, List<StoreProductModel> products) {
+    if (products.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -159,9 +152,8 @@ class StoreScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProductCard(BuildContext context, StoreProduct product) {
-    // Determine placeholder color/icon based on category
-    final isBeans = product.category == 'Beans';
+  Widget _buildProductCard(BuildContext context, StoreProductModel product) {
+    final isBeans = product.categoryid == 0 || product.categoryid == 1;
     final placeholderColor = isBeans ? const Color(0xFFFFECCC) : const Color(0xFFF0F2F5);
     final icon = isBeans ? Icons.coffee_maker : Icons.sanitizer;
     final sizeText = product.sizes.isNotEmpty ? product.sizes.first : '';
@@ -184,10 +176,18 @@ class StoreScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: placeholderColor,
                   borderRadius: BorderRadius.circular(24),
+                  image: product.image.isNotEmpty
+                      ? DecorationImage(
+                          image: NetworkImage(product.image),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
                 ),
-                child: Center(
-                  child: Icon(icon, size: 64, color: Colors.black26),
-                ),
+                child: product.image.isEmpty
+                    ? Center(
+                        child: Icon(icon, size: 64, color: Colors.black26),
+                      )
+                    : null,
               ),
             ),
             const SizedBox(height: 12),
