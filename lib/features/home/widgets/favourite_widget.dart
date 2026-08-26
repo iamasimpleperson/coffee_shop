@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/favorites_manager.dart';
 import '../../coffee/screens/choose_coffee.dart';
 import '../../coffee/screens/coffee_detail.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class FavouriteWidget extends ConsumerWidget {
   const FavouriteWidget({super.key});
@@ -15,9 +16,9 @@ class FavouriteWidget extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Favourites',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)?.favourites ?? 'Favourites',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             IconButton(
               onPressed: () {
@@ -41,10 +42,10 @@ class FavouriteWidget extends ConsumerWidget {
             builder: (context) {
               final favorites = ref.watch(favoritesProvider);
               if (favorites.isEmpty) {
-                return const Center(
+                return Center(
                   child: Text(
-                    'No favorites yet. Add some!',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                    AppLocalizations.of(context)?.noFavoritesYet ?? 'No favorites yet. Add some!',
+                    style: const TextStyle(color: Colors.grey, fontSize: 16),
                   ),
                 );
               }
@@ -67,7 +68,7 @@ class FavouriteWidget extends ConsumerWidget {
                       context: context,
                       size: option.size?.substring(0, 1) ?? 'M',
                       title: option.name.replaceAll('\n', ' '),
-                      subtitle: option.flavor ?? 'Your favorite',
+                      subtitle: option.flavor ?? AppLocalizations.of(context)?.yourFavorite ?? 'Your favorite',
                       icon: option.icon,
                       isDefault: index == 0,
                     ),
@@ -160,7 +161,7 @@ class FavouriteWidget extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Size $size',
+                  AppLocalizations.of(context)?.size(size) ?? 'Size $size',
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,

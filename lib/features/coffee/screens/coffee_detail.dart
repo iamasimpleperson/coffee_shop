@@ -7,6 +7,7 @@ import '../../home/models/favorites_manager.dart';
 import 'package:coffee_shop/routes/auth_notifier.dart';
 import 'package:coffee_shop/features/machine/models/machine_manager.dart';
 import 'package:go_router/go_router.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class CoffeeDetail extends ConsumerStatefulWidget {
   final CoffeeOption coffee;
@@ -39,19 +40,19 @@ class _CoffeeDetailState extends ConsumerState<CoffeeDetail> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Login Required'),
-          content: const Text('Please log in to make coffee.'),
+          title: Text(AppLocalizations.of(context)?.loginRequired ?? 'Login Required'),
+          content: Text(AppLocalizations.of(context)?.pleaseLogInToMakeCoffee ?? 'Please log in to make coffee.'),
           actions: [
             TextButton(
               onPressed: () => context.pop(),
-              child: const Text('Back'),
+              child: Text(AppLocalizations.of(context)?.back ?? 'Back'),
             ),
             ElevatedButton(
               onPressed: () {
                 context.pop();
                 context.push('/login');
               },
-              child: const Text('Log In'),
+              child: Text(AppLocalizations.of(context)?.logIn ?? 'Log In'),
             ),
           ],
         ),
@@ -149,21 +150,19 @@ class _CoffeeDetailState extends ConsumerState<CoffeeDetail> {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Login Required'),
-                              content: const Text(
-                                'Please log in to add favourites.',
-                              ),
+                              title: Text(AppLocalizations.of(context)?.loginRequired ?? 'Login Required'),
+                              content: Text(AppLocalizations.of(context)?.loginRequired ?? 'Please log in to add favourites.'),
                               actions: [
                                 TextButton(
                                   onPressed: () => context.pop(),
-                                  child: const Text('Back'),
+                                  child: Text(AppLocalizations.of(context)?.back ?? 'Back'),
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
                                     context.pop();
                                     context.push('/login');
                                   },
-                                  child: const Text('Log In'),
+                                  child: Text(AppLocalizations.of(context)?.logIn ?? 'Log In'),
                                 ),
                               ],
                             ),
@@ -187,9 +186,9 @@ class _CoffeeDetailState extends ConsumerState<CoffeeDetail> {
                 const SizedBox(height: 24),
 
                 // Size Selection
-                const Text(
-                  'Size',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Text(
+                  AppLocalizations.of(context)?.size('').trim() ?? 'Size',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -270,9 +269,9 @@ class _CoffeeDetailState extends ConsumerState<CoffeeDetail> {
                 const SizedBox(height: 20),
 
                 // Flavor Selection
-                const Text(
-                  'Flavor',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Text(
+                  AppLocalizations.of(context)?.taste ?? 'Flavor',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -380,9 +379,9 @@ class _CoffeeDetailState extends ConsumerState<CoffeeDetail> {
                               borderRadius: BorderRadius.circular(24),
                             ),
                           ),
-                          child: const Text(
-                            'Make it!',
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)?.makeCoffee ?? 'Make it!',
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/order_history_manager.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class OrderHistoryScreen extends ConsumerWidget {
   const OrderHistoryScreen({super.key});
@@ -11,7 +12,7 @@ class OrderHistoryScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Order History'),
+        title: Text(AppLocalizations.of(context)?.orders ?? 'Order History'),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -28,7 +29,7 @@ class OrderHistoryScreen extends ConsumerWidget {
                 children: [
                   Icon(Icons.receipt_long, size: 80, color: Colors.grey[400]),
                   const SizedBox(height: 16),
-                  Text('No orders yet', style: TextStyle(fontSize: 18, color: Colors.grey[600])),
+                  Text(AppLocalizations.of(context)?.noOrdersYet ?? 'No orders yet', style: TextStyle(fontSize: 18, color: Colors.grey[600])),
                 ],
               ),
             );
@@ -51,7 +52,7 @@ class OrderHistoryScreen extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Order #${order.id.substring(order.id.length - 6)}',
+                            '${AppLocalizations.of(context)?.orderNumber ?? "Order #"}${order.id.substring(order.id.length - 6)}',
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(

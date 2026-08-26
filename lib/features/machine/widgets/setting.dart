@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:coffee_shop/features/machine/models/machine_manager.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class SettingsWidget extends ConsumerWidget {
   const SettingsWidget({super.key});
@@ -12,9 +13,9 @@ class SettingsWidget extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Settings',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)?.settings ?? 'Settings',
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
@@ -27,23 +28,23 @@ class SettingsWidget extends ConsumerWidget {
             clipBehavior: Clip.antiAlias, // Ensures ink splash respects rounded corners
             child: Column(
               children: [
-                _buildSettingItem(context, 'General', () {}),
+                _buildSettingItem(context, AppLocalizations.of(context)?.general ?? 'General', () {}),
                 const Divider(height: 1, color: Color(0xFFF0F0F0)),
-                _buildSettingItem(context, 'Reminders', () {}),
+                _buildSettingItem(context, AppLocalizations.of(context)?.reminders ?? 'Reminders', () {}),
                 const Divider(height: 1, color: Color(0xFFF0F0F0)),
-                _buildSettingItem(context, 'Preferences', () {}),
+                _buildSettingItem(context, AppLocalizations.of(context)?.preferences ?? 'Preferences', () {}),
                 const Divider(height: 1, color: Color(0xFFF0F0F0)),
-                _buildSettingItem(context, 'Refill Water & Beans', () {
+                _buildSettingItem(context, AppLocalizations.of(context)?.refillWaterBeans ?? 'Refill Water & Beans', () {
                   ref.read(machineProvider.notifier).refill();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Machine refilled!')),
+                    SnackBar(content: Text(AppLocalizations.of(context)?.machineRefilled ?? 'Machine refilled!')),
                   );
                 }),
                 const Divider(height: 1, color: Color(0xFFF0F0F0)),
-                _buildSettingItem(context, 'Clean Machine', () {
+                _buildSettingItem(context, AppLocalizations.of(context)?.cleanMachine ?? 'Clean Machine', () {
                   ref.read(machineProvider.notifier).cleanMachine();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Machine cleaned!')),
+                    SnackBar(content: Text(AppLocalizations.of(context)?.machineCleaned ?? 'Machine cleaned!')),
                   );
                 }),
               ],

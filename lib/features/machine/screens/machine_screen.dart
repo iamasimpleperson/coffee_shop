@@ -7,6 +7,7 @@ import 'package:coffee_shop/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class MachineScreen extends ConsumerWidget {
   const MachineScreen({super.key});
@@ -25,7 +26,7 @@ class MachineScreen extends ConsumerWidget {
             }
           },
         ),
-        title: const Text('Name Machine'),
+        title: Text(AppLocalizations.of(context)?.nameMachine ?? 'Name Machine'),
         actions: [Icon(Icons.info), SizedBox(width: 20)],
       ),
       body: SingleChildScrollView(

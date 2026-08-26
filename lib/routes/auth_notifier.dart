@@ -33,8 +33,13 @@ class AuthNotifier extends Notifier<AuthState> {
       registeredDate = DateTime.tryParse(registeredDateStr);
     }
 
-    if (userId != null && userName != null && userEmail != null) {
-      final user = UserModel(id: userId, name: userName, email: userEmail, registeredDate: registeredDate);
+    if (userId != null && userEmail != null) {
+      final user = UserModel(
+        id: int.parse(userId),
+        email: userEmail,
+        authProvider: 'email',
+        isGuest: false,
+      );
       state = AuthState(currentUser: user, isAuthenticated: true);
     }
   }
@@ -45,12 +50,17 @@ class AuthNotifier extends Notifier<AuthState> {
 
     // Mock user login
     final now = DateTime.now();
-    final user = UserModel(id: '1', name: 'Coffee Lover', email: email, registeredDate: now);
+    final user = UserModel(
+      id: 1,
+      email: email,
+      authProvider: 'email',
+      isGuest: false,
+    );
     state = AuthState(currentUser: user, isAuthenticated: true);
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_id', user.id);
-    await prefs.setString('user_name', user.name);
+    await prefs.setString('user_id', user.id.toString());
+    // await prefs.setString('user_name', user.fullName);
     await prefs.setString('user_email', user.email);
     await prefs.setString('user_registered_date', now.toIso8601String());
   }
@@ -61,21 +71,31 @@ class AuthNotifier extends Notifier<AuthState> {
 
     // Mock user registration
     final now = DateTime.now();
-    final user = UserModel(id: '2', name: name, email: email, registeredDate: now);
+    final user = UserModel(
+      id: 2,
+      email: email,
+      authProvider: 'email',
+      isGuest: false,
+    );
     state = AuthState(currentUser: user, isAuthenticated: true);
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_id', user.id);
-    await prefs.setString('user_name', user.name);
+    await prefs.setString('user_id', user.id.toString());
+    // await prefs.setString('user_name', user.name);
     await prefs.setString('user_email', user.email);
     await prefs.setString('user_registered_date', now.toIso8601String());
   }
 
   Future<void> updateProfile(String name, String email) async {
     if (state.currentUser != null) {
-      final user = UserModel(id: state.currentUser!.id, name: name, email: email, registeredDate: state.currentUser!.registeredDate);
+      final user = UserModel(
+        id: state.currentUser!.id,
+        email: email,
+        authProvider: 'email',
+        isGuest: false,
+      );
       state = state.copyWith(currentUser: user);
-      
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_name', name);
       await prefs.setString('user_email', email);

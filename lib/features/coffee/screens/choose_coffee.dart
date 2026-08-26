@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'coffee_detail.dart';
-import '../../../services/mock_data_service.dart';
 import '../../../models/coffee_model.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
+import 'package:coffee_shop/services/coffee_service.dart';
 
 // Mock model for API data
 class CoffeeOption {
@@ -57,9 +58,9 @@ class ChooseCoffee extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
-            'Choose your coffee',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)?.chooseCoffee ?? 'Choose your coffee',
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -67,7 +68,7 @@ class ChooseCoffee extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FutureBuilder<List<CoffeeModel>>(
-            future: MockDataService.getCoffees(),
+            future: CoffeeService().getCoffees(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Padding(
@@ -77,12 +78,12 @@ class ChooseCoffee extends StatelessWidget {
               } else if (snapshot.hasError) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 40),
-                  child: Center(child: Text('Error: ${snapshot.error}')),
+                  child: Center(child: Text(AppLocalizations.of(context)?.error(snapshot.error.toString()) ?? 'Error: ${snapshot.error}')),
                 );
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40),
-                  child: Center(child: Text('No coffees available.')),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: Center(child: Text(AppLocalizations.of(context)?.noCoffeesAvailable ?? 'No coffees available.')),
                 );
               }
 

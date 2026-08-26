@@ -1,11 +1,13 @@
+import 'package:coffee_shop/services/coffee_service.dart';
+import 'package:coffee_shop/models/coffee_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../routes/route_name.dart';
 import '../../cart/models/cart_manager.dart';
-import '../../../services/mock_data_service.dart';
 import '../models/store_product.dart';
 import 'cart_screen.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class StoreScreen extends ConsumerWidget {
   const StoreScreen({super.key});
@@ -18,9 +20,9 @@ class StoreScreen extends ConsumerWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
-        title: const Text(
-          'Store',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)?.ourCoffee ?? 'Store',
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -85,20 +87,30 @@ class StoreScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: FutureBuilder<List<StoreProduct>>(
-        future: MockDataService.getStoreProducts(),
+      body: FutureBuilder<List<CoffeeModel>>(
+        future: CoffeeService().getCoffees(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text(AppLocalizations.of(context)?.error(snapshot.error.toString()) ?? 'Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No products available.'));
+            return Center(child: Text(AppLocalizations.of(context)?.noProductsAvailable ?? 'No products available.'));
           }
 
-          final products = snapshot.data!;
+          // Convert CoffeeModels from the API into StoreProducts for the UI
+          final products = snapshot.data!.map((coffee) => StoreProduct(
+            id: coffee.id,
+            name: coffee.name,
+            imageUrl: coffee.image,
+            category: 'Beans',
+            subtitle: 'From API',
+            description: '',
+            price: 0.0,
+          )).toList();
+
           final beans = products.where((p) => p.category == 'Beans').toList();
-          final care = products.where((p) => p.category == 'Care').toList();
+          final care = products.where((p) => p.category == 'Care').toList(); // Will be empty unless added to API
 
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 16),

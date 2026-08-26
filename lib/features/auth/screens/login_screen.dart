@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:coffee_shop/routes/route_name.dart';
 import 'package:coffee_shop/routes/auth_notifier.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -23,7 +24,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter email and password')),
+        SnackBar(content: Text(AppLocalizations.of(context)?.enterEmailPassword ?? 'Please enter email and password')),
       );
       return;
     }
@@ -38,7 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context)?.loginFailed ?? "Login failed: "}$e')),
         );
       }
     } finally {
@@ -79,14 +80,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       const SizedBox(height: 16),
                       Text(
-                        'Welcome Back',
+                        AppLocalizations.of(context)?.welcomeBack ?? 'Welcome Back',
                         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Log in to your account",
+                        AppLocalizations.of(context)?.loginAccount ?? "Log in to your account",
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: Colors.grey,
                         ),
@@ -96,7 +97,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Email',
+                            AppLocalizations.of(context)?.email ?? 'Email',
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                           const SizedBox(height: 8),
@@ -112,7 +113,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Password',
+                            AppLocalizations.of(context)?.password ?? 'Password',
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                           const SizedBox(height: 8),
@@ -160,20 +161,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : const Text(
-                                  'Log In',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              : Text(
+                                  AppLocalizations.of(context)?.logIn ?? 'Log In',
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                 ),
                         ),
                       ),
                       const SizedBox(height: 16),
                       TextButton(
                         onPressed: () => context.go(AppRoutes.register),
-                        child: const Text('Don\'t have an account? Sign Up'),
+                        child: Text(AppLocalizations.of(context)?.noAccountSignUp ?? 'Don\'t have an account? Sign Up'),
                       ),
                       TextButton(
                         onPressed: () => context.go(AppRoutes.home),
-                        child: const Text('Continue as Guest', style: TextStyle(color: Colors.grey)),
+                        child: Text(AppLocalizations.of(context)?.continueGuest ?? 'Continue as Guest', style: const TextStyle(color: Colors.grey)),
                       ),
                     ],
                   ),

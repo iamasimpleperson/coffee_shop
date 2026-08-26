@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:coffee_shop/services/mock_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../coffee/screens/choose_coffee.dart';
+import 'package:coffee_shop/services/coffee_service.dart';
 
 class FavoritesNotifier extends Notifier<List<CoffeeOption>> {
   @override
@@ -13,9 +13,10 @@ class FavoritesNotifier extends Notifier<List<CoffeeOption>> {
 
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<String> favoriteData = prefs.getStringList('favorite_data') ?? [];
+    final List<String> favoriteData =
+        prefs.getStringList('favorite_data') ?? [];
 
-    final coffees = await MockDataService.getCoffees();
+    final coffees = await CoffeeService().getCoffees();
 
     final List<CoffeeOption> loadedFavorites = [];
     for (String dataStr in favoriteData) {
@@ -52,11 +53,7 @@ class FavoritesNotifier extends Notifier<List<CoffeeOption>> {
   Future<void> _saveFavorites() async {
     final prefs = await SharedPreferences.getInstance();
     final dataList = state.map((e) {
-      return jsonEncode({
-        'id': e.id,
-        'size': e.size,
-        'flavor': e.flavor,
-      });
+      return jsonEncode({'id': e.id, 'size': e.size, 'flavor': e.flavor});
     }).toList();
     await prefs.setStringList('favorite_data', dataList);
   }
@@ -78,6 +75,7 @@ class FavoritesNotifier extends Notifier<List<CoffeeOption>> {
   }
 }
 
-final favoritesProvider = NotifierProvider<FavoritesNotifier, List<CoffeeOption>>(() {
-  return FavoritesNotifier();
-});
+final favoritesProvider =
+    NotifierProvider<FavoritesNotifier, List<CoffeeOption>>(() {
+      return FavoritesNotifier();
+    });

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/schedule_manager.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class AddScheduleBottomSheet extends ConsumerStatefulWidget {
   final ScheduleModel? existingSchedule;
@@ -128,13 +129,13 @@ class _AddScheduleBottomSheetState extends ConsumerState<AddScheduleBottomSheet>
                     child: const Icon(Icons.alarm, color: Color(0xFF9080F0), size: 36),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Schedule',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  Text(
+                    AppLocalizations.of(context)?.schedule ?? 'Schedule',
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Set the perfect time for your coffee.',
+                    AppLocalizations.of(context)?.setPerfectTime ?? 'Set the perfect time for your coffee.',
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                 ],
@@ -143,7 +144,7 @@ class _AddScheduleBottomSheetState extends ConsumerState<AddScheduleBottomSheet>
             const SizedBox(height: 24),
 
             // Short Name
-            const Text('Short name', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(AppLocalizations.of(context)?.shortName ?? 'Short name', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 8),
             TextField(
               controller: _nameController,
@@ -160,7 +161,7 @@ class _AddScheduleBottomSheetState extends ConsumerState<AddScheduleBottomSheet>
             const SizedBox(height: 20),
 
             // Time
-            const Text('Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(AppLocalizations.of(context)?.time ?? 'Time', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 8),
             GestureDetector(
               onTap: _pickTime,
@@ -175,7 +176,7 @@ class _AddScheduleBottomSheetState extends ConsumerState<AddScheduleBottomSheet>
                     const Icon(Icons.access_time, color: Colors.black87),
                     const SizedBox(width: 12),
                     Text(
-                      'Today, $timeStr',
+                      '${AppLocalizations.of(context)?.today ?? "Today"}, $timeStr',
                       style: const TextStyle(fontSize: 15, color: Colors.black87),
                     ),
                   ],
@@ -185,7 +186,7 @@ class _AddScheduleBottomSheetState extends ConsumerState<AddScheduleBottomSheet>
             const SizedBox(height: 20),
 
             // Repeat
-            const Text('Repeat', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(AppLocalizations.of(context)?.repeat ?? 'Repeat', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -201,13 +202,13 @@ class _AddScheduleBottomSheetState extends ConsumerState<AddScheduleBottomSheet>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Create your coffee routine',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                          Text(
+                            AppLocalizations.of(context)?.createRoutine ?? 'Create your coffee routine',
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Let the maker handle the rest.',
+                            AppLocalizations.of(context)?.letMakerHandle ?? 'Let the maker handle the rest.',
                             style: TextStyle(color: Colors.grey[500], fontSize: 12),
                           ),
                         ],
@@ -280,9 +281,9 @@ class _AddScheduleBottomSheetState extends ConsumerState<AddScheduleBottomSheet>
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: const Text(
-                  'Save',
-                  style: TextStyle(
+                child: Text(
+                  AppLocalizations.of(context)?.save ?? 'Save',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

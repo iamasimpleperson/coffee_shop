@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../cart/models/cart_manager.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -43,9 +44,9 @@ class CartScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Your Cart',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Text(
+                AppLocalizations.of(context)?.cart ?? 'Your Cart',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               IconButton(
                 icon: const Icon(Icons.close),
@@ -60,10 +61,10 @@ class CartScreen extends ConsumerWidget {
             child: Builder(
               builder: (context) {
                 if (cartItems.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
-                      'Your cart is empty',
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                      AppLocalizations.of(context)?.yourCartIsEmpty ?? 'Your cart is empty',
+                      style: const TextStyle(color: Colors.grey, fontSize: 16),
                     ),
                   );
                 }
@@ -188,7 +189,7 @@ class CartScreen extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Subtotal', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(AppLocalizations.of(context)?.subtotal ?? 'Subtotal', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       Text('£${total.toStringAsFixed(2)}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     ],
                   ),
@@ -207,9 +208,9 @@ class CartScreen extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(32),
                         ),
                       ),
-                      child: const Text(
-                        'Checkout',
-                        style: TextStyle(
+                      child: Text(
+                        AppLocalizations.of(context)?.checkout ?? 'Checkout',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

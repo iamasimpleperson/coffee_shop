@@ -4,6 +4,7 @@ import '../../../models/schedule_manager.dart';
 import 'add_schedule_bottom_sheet.dart';
 import 'package:coffee_shop/routes/auth_notifier.dart';
 import 'package:go_router/go_router.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class ScheduleWidget extends ConsumerWidget {
   const ScheduleWidget({super.key});
@@ -15,9 +16,9 @@ class ScheduleWidget extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Schedule',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)?.schedule ?? 'Schedule',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             IconButton(
               onPressed: () {
@@ -25,16 +26,16 @@ class ScheduleWidget extends ConsumerWidget {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('Login Required'),
-                      content: const Text('Please log in to add schedules.'),
+                      title: Text(AppLocalizations.of(context)?.loginRequired ?? 'Login Required'),
+                      content: Text(AppLocalizations.of(context)?.pleaseLogInToAddSchedules ?? 'Please log in to add schedules.'),
                       actions: [
-                        TextButton(onPressed: () => context.pop(), child: const Text('Back')),
+                        TextButton(onPressed: () => context.pop(), child: Text(AppLocalizations.of(context)?.back ?? 'Back')),
                         ElevatedButton(
                           onPressed: () {
                             context.pop();
                             context.push('/login');
                           },
-                          child: const Text('Log In'),
+                          child: Text(AppLocalizations.of(context)?.logIn ?? 'Log In'),
                         ),
                       ],
                     ),
@@ -59,12 +60,12 @@ class ScheduleWidget extends ConsumerWidget {
           builder: (context) {
             final schedules = ref.watch(scheduleProvider);
             if (schedules.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 24),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Center(
                   child: Text(
-                    'No schedules yet. Create one!',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                    AppLocalizations.of(context)?.noSchedulesYet ?? 'No schedules yet. Create one!',
+                    style: const TextStyle(color: Colors.grey, fontSize: 16),
                   ),
                 ),
               );
@@ -83,16 +84,16 @@ class ScheduleWidget extends ConsumerWidget {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: const Text('Login Required'),
-                          content: const Text('Please log in to edit schedules.'),
+                          title: Text(AppLocalizations.of(context)?.loginRequired ?? 'Login Required'),
+                          content: Text(AppLocalizations.of(context)?.pleaseLogInToEditSchedules ?? 'Please log in to edit schedules.'),
                           actions: [
-                            TextButton(onPressed: () => context.pop(), child: const Text('Back')),
+                            TextButton(onPressed: () => context.pop(), child: Text(AppLocalizations.of(context)?.back ?? 'Back')),
                             ElevatedButton(
                               onPressed: () {
                                 context.pop();
                                 context.push('/login');
                               },
-                              child: const Text('Log In'),
+                              child: Text(AppLocalizations.of(context)?.logIn ?? 'Log In'),
                             ),
                           ],
                         ),
@@ -149,7 +150,7 @@ class ScheduleWidget extends ConsumerWidget {
                               ),
                             const SizedBox(height: 4),
                               Text(
-                                '${schedule.isRepeat ? 'Repeating' : 'One-time'} • ${schedule.time.format(context)}',
+                                '${schedule.isRepeat ? (AppLocalizations.of(context)?.repeating ?? 'Repeating') : (AppLocalizations.of(context)?.oneTime ?? 'One-time')} • ${schedule.time.format(context)}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600],
@@ -167,16 +168,16 @@ class ScheduleWidget extends ConsumerWidget {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: const Text('Login Required'),
-                                content: const Text('Please log in to manage schedules.'),
+                                title: Text(AppLocalizations.of(context)?.loginRequired ?? 'Login Required'),
+                                content: Text(AppLocalizations.of(context)?.pleaseLogInToManageSchedules ?? 'Please log in to manage schedules.'),
                                 actions: [
-                                  TextButton(onPressed: () => context.pop(), child: const Text('Back')),
+                                  TextButton(onPressed: () => context.pop(), child: Text(AppLocalizations.of(context)?.back ?? 'Back')),
                                   ElevatedButton(
                                     onPressed: () {
                                       context.pop();
                                       context.push('/login');
                                     },
-                                    child: const Text('Log In'),
+                                    child: Text(AppLocalizations.of(context)?.logIn ?? 'Log In'),
                                   ),
                                 ],
                               ),

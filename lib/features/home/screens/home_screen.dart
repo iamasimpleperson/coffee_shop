@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/machine_bloc.dart';
 import '../widgets/recommendation_widget.dart';
-
-import 'package:coffee_shop/routes/auth_notifier.dart';
+import '../widgets/api_test_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -21,12 +20,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Builder(
-          builder: (context) {
-            final name = ref.watch(authProvider).currentUser?.name ?? 'Guest';
-            return Text('Hello, $name');
-          },
-        ),
+        // title: Builder(
+        //   builder: (context) {
+        //     final name = ref.watch(authProvider).currentUser?.name ?? AppLocalizations.of(context)?.guestMode ?? 'Guest';
+        //     return Text(AppLocalizations.of(context)?.hello(name) ?? 'Hello, $name');
+        //   },
+        // ),
         actions: [
           GestureDetector(
             onTap: () => context.go('/profile'),
@@ -40,6 +39,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Column(
           children: const [
             RecommendationWidget(),
+            SizedBox(height: 32),
+            ApiTestWidget(),
             SizedBox(height: 32),
             MachineBloc(),
             SizedBox(height: 32),

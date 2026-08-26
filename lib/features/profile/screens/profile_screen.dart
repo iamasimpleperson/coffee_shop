@@ -1,9 +1,10 @@
 import 'package:coffee_shop/routes/auth_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 import '../../../core/theme/theme_notifier.dart';
+import '../../../core/localization/locale_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -22,7 +23,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.initState();
     final user = ref.read(authProvider).currentUser;
     if (user != null) {
-      _nameController.text = user.name;
       _emailController.text = user.email;
     }
   }
@@ -40,7 +40,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     if (name.isEmpty || email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Name and Email cannot be empty')),
+        SnackBar(content: Text(AppLocalizations.of(context)?.nameEmailEmpty ?? 'Name and Email cannot be empty')),
       );
       return;
     }
@@ -54,7 +54,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully!')),
+          SnackBar(content: Text(AppLocalizations.of(context)?.profileUpdated ?? 'Profile updated successfully!')),
         );
         if (context.canPop()) {
           context.pop();
@@ -77,7 +77,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: Text(AppLocalizations.of(context)?.profile ?? 'My Profile'),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -101,18 +101,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       radius: 50,
                       child: Icon(Icons.person, size: 50),
                     ),
-                    if (ref.watch(authProvider).currentUser?.registeredDate != null) ...[
-                      const SizedBox(height: 16),
-                      Center(
-                        child: Text(
-                          'Member since: ${DateFormat('MMMM d, yyyy').format(ref.watch(authProvider).currentUser!.registeredDate!)}',
-                          style: const TextStyle(color: Colors.grey, fontSize: 14),
-                        ),
-                      ),
-                    ],
                     const SizedBox(height: 32),
                     Text(
-                      'Full Name',
+                      AppLocalizations.of(context)?.fullName ?? 'Full Name',
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 8),
@@ -126,7 +117,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Email',
+                      AppLocalizations.of(context)?.email ?? 'Email',
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 8),
@@ -159,9 +150,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Text(
-                              'Save Changes',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          : Text(
+                              AppLocalizations.of(context)?.saveChanges ?? 'Save Changes',
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                     ),
                     const SizedBox(height: 16),
@@ -169,7 +160,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       builder: (context) {
                         final isDark = ref.watch(themeProvider);
                         return SwitchListTile(
-                          title: const Text('Dark Mode'),
+                          title: Text(AppLocalizations.of(context)?.darkMode ?? 'Dark Mode'),
                           secondary: const Icon(Icons.dark_mode),
                           value: isDark,
                           onChanged: (val) {
@@ -180,7 +171,31 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       }
                     ),
                     ListTile(
-                      title: const Text('Order History'),
+                      title: Text(AppLocalizations.of(context)?.language ?? 'Language'),
+                      leading: const Icon(Icons.language),
+                      trailing: DropdownButton<String>(
+                        value: ref.watch(localeProvider)?.languageCode ?? 'en',
+                        underline: const SizedBox(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            ref.read(localeProvider.notifier).changeLanguage(newValue);
+                          }
+                        },
+                        items: [
+                          DropdownMenuItem(
+                            value: 'en',
+                            child: Text(AppLocalizations.of(context)?.english ?? 'English'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'km',
+                            child: Text(AppLocalizations.of(context)?.khmer ?? 'Khmer'),
+                          ),
+                        ],
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    ListTile(
+                      title: Text(AppLocalizations.of(context)?.orders ?? 'Order History'),
                       leading: const Icon(Icons.receipt_long),
                       trailing: const Icon(Icons.chevron_right),
                       contentPadding: EdgeInsets.zero,
@@ -190,7 +205,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     OutlinedButton.icon(
                       onPressed: _logout,
                       icon: const Icon(Icons.logout, color: Colors.red),
-                      label: const Text('Log Out', style: TextStyle(color: Colors.red)),
+                      label: Text(AppLocalizations.of(context)?.logout ?? 'Log Out', style: const TextStyle(color: Colors.red)),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.red),
                         minimumSize: const Size(double.infinity, 50),
@@ -209,7 +224,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     const Icon(Icons.person_outline, size: 100, color: Colors.grey),
                     const SizedBox(height: 16),
                     Text(
-                      'Guest Mode',
+                      AppLocalizations.of(context)?.guestMode ?? 'Guest Mode',
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -217,7 +232,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Create an account to order coffee and save your preferences.',
+                      AppLocalizations.of(context)?.guestModeDesc ?? 'Create an account to order coffee and save your preferences.',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Colors.grey,
                       ),
@@ -234,7 +249,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text('Log In', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      child: Text(AppLocalizations.of(context)?.logIn ?? 'Log In', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 16),
                     OutlinedButton(
@@ -246,7 +261,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text('Sign Up', style: TextStyle(color: Color(0xFF6AC79E), fontSize: 16, fontWeight: FontWeight.bold)),
+                      child: Text(AppLocalizations.of(context)?.signUp ?? 'Sign Up', style: const TextStyle(color: Color(0xFF6AC79E), fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),

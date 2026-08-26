@@ -13,8 +13,6 @@ class CartItemModel {
     this.size = 'M',
   });
 
-  double get totalPrice => coffee.price * quantity;
-
   CartItemModel copyWith({
     String? id,
     CoffeeModel? coffee,

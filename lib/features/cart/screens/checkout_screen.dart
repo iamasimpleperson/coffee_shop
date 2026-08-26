@@ -7,6 +7,7 @@ import '../../../models/order_history_manager.dart';
 import '../widgets/address_bottom_sheet.dart';
 import '../widgets/payment_bottom_sheet.dart';
 import '../widgets/success_bottom_sheet.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
@@ -64,9 +65,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         backgroundColor: const Color(0xFFF6F7F9),
         elevation: 0,
         centerTitle: true,
-        title: const Text(
-          'Checkout',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        title: Text(
+          AppLocalizations.of(context)?.checkout ?? 'Checkout',
+          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
@@ -213,7 +214,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Subtotal',
+                      AppLocalizations.of(context)?.subtotal ?? 'Subtotal',
                       style: TextStyle(color: Colors.grey[600], fontSize: 15),
                     ),
                     Text(
@@ -254,9 +255,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Total',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)?.total ?? 'Total',
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
@@ -307,7 +308,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           ),
                         )
                       : Text(
-                          'Pay now £${total.toStringAsFixed(2)}',
+                          '${AppLocalizations.of(context)?.payNow ?? "Pay now"} £${total.toStringAsFixed(2)}',
                           style: TextStyle(
                             color: isReady ? Colors.white : Colors.grey[500],
                             fontSize: 16,

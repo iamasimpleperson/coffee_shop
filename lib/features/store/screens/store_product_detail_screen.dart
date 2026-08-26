@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../cart/models/cart_manager.dart';
 import '../models/store_product.dart';
 import 'package:coffee_shop/routes/auth_notifier.dart';
+import 'package:coffee_shop/l10n/app_localizations.dart';
 
 class StoreProductDetailScreen extends ConsumerStatefulWidget {
   final String productId;
@@ -107,9 +108,9 @@ class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScr
                   const SizedBox(height: 24),
                   
                   if (product.sizes.isNotEmpty) ...[
-                    const Text(
-                      'Size',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    Text(
+                      AppLocalizations.of(context)?.size('').trim() ?? 'Size',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -147,9 +148,9 @@ class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScr
                     const SizedBox(height: 24),
                   ],
 
-                  const Text(
-                    'About',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  Text(
+                    AppLocalizations.of(context)?.details ?? 'About',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -159,24 +160,24 @@ class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScr
                   const SizedBox(height: 24),
 
                   if (product.taste != null) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Taste', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                        Text(product.taste!, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                      ],
-                    ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(AppLocalizations.of(context)?.taste ?? 'Taste', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                          Text(product.taste!, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                        ],
+                      ),
                     const Divider(height: 24),
                   ],
                   
                   if (product.sweetness != null) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Sweetness', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                        Text(product.sweetness!, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                      ],
-                    ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(AppLocalizations.of(context)?.sweetness ?? 'Sweetness', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                          Text(product.sweetness!, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                        ],
+                      ),
                     const Divider(height: 24),
                   ],
 
@@ -226,16 +227,16 @@ class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScr
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    title: const Text('Login Required'),
-                                    content: const Text('Please log in to add to cart.'),
+                                    title: Text(AppLocalizations.of(context)?.loginRequired ?? 'Login Required'),
+                                    content: Text(AppLocalizations.of(context)?.pleaseLogInToAddCart ?? 'Please log in to add to cart.'),
                                     actions: [
-                                      TextButton(onPressed: () => context.pop(), child: const Text('Back')),
+                                      TextButton(onPressed: () => context.pop(), child: Text(AppLocalizations.of(context)?.back ?? 'Back')),
                                       ElevatedButton(
                                         onPressed: () {
                                           context.pop();
                                           context.push('/login');
                                         },
-                                        child: const Text('Log In'),
+                                        child: Text(AppLocalizations.of(context)?.logIn ?? 'Log In'),
                                       ),
                                     ],
                                   ),
@@ -245,7 +246,7 @@ class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScr
                               ref.read(cartProvider.notifier).addToCart(product, _selectedSize, _quantity);
                               context.pop();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Added $_quantity item(s) to cart!')),
+                                SnackBar(content: Text(AppLocalizations.of(context)?.addedToCart(_quantity) ?? 'Added $_quantity item(s) to cart!')),
                               );
                             },
                             style: ElevatedButton.styleFrom(
@@ -255,7 +256,7 @@ class _StoreProductDetailScreenState extends ConsumerState<StoreProductDetailScr
                               ),
                             ),
                             child: Text(
-                              'Add £${totalPrice.toStringAsFixed(2)}',
+                              '${AppLocalizations.of(context)?.addToCart ?? "Add"} £${totalPrice.toStringAsFixed(2)}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,

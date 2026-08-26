@@ -1,0 +1,156 @@
+{
+  "@@locale": "en",
+
+  "appName": "Coffee Shop",
+
+  "welcome": "Welcome",
+  "welcomeMessage": "Welcome to our coffee shop",
+
+  "home": "Home",
+  "menu": "Menu",
+  "cart": "Cart",
+  "orders": "Orders",
+  "profile": "Profile",
+
+  "orderNow": "Order Now",
+  "addToCart": "Add to Cart",
+
+  "language": "Language",
+  "chooseLanguage": "Choose Language",
+  "english": "English",
+  "khmer": "Khmer",
+
+  "popularCoffee": "Popular Coffee",
+  "icedLatte": "Iced Latte",
+  "cappuccino": "Cappuccino",
+  "americano": "Americano",
+
+  "price": "Price",
+  "logout": "Logout",
+  "loginRequired": "Login Required",
+  "pleaseLogInToAddCart": "Please log in to add to cart.",
+  "pleaseLogInToAddSchedules": "Please log in to add schedules.",
+  "pleaseLogInToEditSchedules": "Please log in to edit schedules.",
+  "pleaseLogInToManageSchedules": "Please log in to manage schedules.",
+  "pleaseLogInToMakeCoffee": "Please log in to make coffee.",
+  "back": "Back",
+  "logIn": "Log In",
+  "signUp": "Sign Up",
+  "subtotal": "Subtotal",
+  "taste": "Taste",
+  "sweetness": "Sweetness",
+  "noOrdersYet": "No orders yet",
+  "error": "Error: {message}",
+  "@error": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "noProductsAvailable": "No products available.",
+  "noCoffeesAvailable": "No coffees available.",
+  "addedToCart": "Added {quantity} item(s) to cart!",
+  "@addedToCart": {
+    "placeholders": {
+      "quantity": {
+        "type": "int"
+      }
+    }
+  },
+  "nameAndEmailCannotBeEmpty": "Name and Email cannot be empty",
+  "profileUpdatedSuccessfully": "Profile updated successfully!",
+  "darkMode": "Dark Mode",
+  "guestMode": "Guest Mode",
+  "createAccountToOrder": "Create an account to order coffee and save your preferences.",
+  "pageNotFound": "Page not found: {uri}",
+  "@pageNotFound": {
+    "placeholders": {
+      "uri": {
+        "type": "String"
+      }
+    }
+  },
+  "nameMachine": "Name Machine",
+  "machineRefilled": "Machine refilled!",
+  "machineCleaned": "Machine cleaned!",
+  "hello": "Hello, {name}",
+  "@hello": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shortName": "Short name",
+  "time": "Time",
+  "schedule": "Schedule",
+  "noSchedulesYet": "No schedules yet. Create one!",
+  "repeating": "Repeating",
+  "oneTime": "One-time",
+  "favourites": "Favourites",
+  "noFavoritesYet": "No favorites yet. Add some!",
+  "yourFavorite": "Your favorite",
+  "size": "Size {size}",
+  "@size": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "editSchedule": "Edit Schedule",
+  "addSchedule": "Add Schedule",
+  "saveChanges": "Save Changes",
+  "titleLabel": "Title",
+  "egMorningCoffee": "e.g., Morning Coffee",
+  "repeatDaily": "Repeat Daily",
+  "pleaseFillInAllFields": "Please fill in all fields",
+  "ourCoffee": "Our Coffee",
+  "details": "Details",
+  "total": "Total",
+  "checkout": "Checkout",
+  "yourCartIsEmpty": "Your cart is empty",
+  "paymentSuccessful": "Payment Successful!",
+  "orderPlaced": "Order Placed",
+  "payNow": "Pay Now",
+  "chooseCoffee": "Choose Coffee",
+  "makeCoffee": "Make Coffee",
+  "cancel": "Cancel",
+  "customise": "Customise",
+  "setPerfectTime": "Set the perfect time for your coffee.",
+  "today": "Today",
+  "repeat": "Repeat",
+  "createRoutine": "Create your coffee routine",
+  "letMakerHandle": "Let the maker handle the rest.",
+  "save": "Save",
+  "settings": "Settings",
+  "general": "General",
+  "reminders": "Reminders",
+  "preferences": "Preferences",
+  "refillWaterBeans": "Refill Water & Beans",
+  "cleanMachine": "Clean Machine",
+  "memberSince": "Member since: ",
+  "fullName": "Full Name",
+  "email": "Email",
+  "nameEmailEmpty": "Name and Email cannot be empty",
+  "profileUpdated": "Profile updated successfully!",
+  "saveChanges": "Save Changes",
+  "darkMode": "Dark Mode",
+  "guestMode": "Guest Mode",
+  "guestModeDesc": "Create an account to order coffee and save your preferences.",
+  "signUp": "Sign Up",
+  "noOrdersYet": "No orders yet",
+  "orderNumber": "Order #",
+  "enterEmailPassword": "Please enter email and password",
+  "loginFailed": "Login failed: ",
+  "welcomeBack": "Welcome Back",
+  "loginAccount": "Log in to your account",
+  "password": "Password",
+  "noAccountSignUp": "Don't have an account? Sign Up",
+  "continueGuest": "Continue as Guest",
+  "createAccount": "Create Account",
+  "signUpToGetStarted": "Sign up to get started",
+  "name": "Name",
+  "alreadyAccount": "Already have an account? Log In"
+}
